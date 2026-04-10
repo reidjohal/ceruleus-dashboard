@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ceruleus Capital — Morning Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Cormorant+Garamond:wght@400;600;700&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      background: #0d0f14;
+      color: #e8e6e0;
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Rainbow bar ── */
+    .rainbow-bar {
+      height: 3px;
+      background: linear-gradient(90deg, #5b8dee, #6ecfb5, #f5c35a, #e07c6e, #b07cf5, #5b8dee);
+    }
+
+    /* ── Top nav ── */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 28px 0;
+    }
+    .nav-pill {
+      border: 0.5px solid rgba(255,255,255,0.2);
+      border-radius: 0;
+      padding: 5px 11px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+    }
+    .week-range {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Main content ── */
+    .main-content { padding: 20px 28px 0; }
+
+    .headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 44px;
+      font-weight: 700;
+      line-height: 1.08;
+      margin-bottom: 10px;
+      color: #f0ede6;
+      letter-spacing: -0.01em;
+    }
+    .headline .accent-gold { color: #f5c35a; }
+    .headline .accent-teal { color: #6ecfb5; }
+    .headline .accent-red  { color: #e07070; }
+
+    .subhead {
+      font-size: 12px;
+      color: rgba(255,255,255,0.36);
+      line-height: 1.6;
+      max-width: 900px;
+      margin-bottom: 20px;
+    }
+
+    /* ── Regenerate button ── */
+    .gen-btn {
+      display: block;
+      width: 100%;
+      margin-bottom: 14px;
+      background: transparent;
+      border: 0.5px solid rgba(255,255,255,0.12);
+      border-radius: 0;
+      -webkit-border-radius: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      color: rgba(255,255,255,0.4);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      padding: 9px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s, color 0.15s;
+      outline: none;
+    }
+    .gen-btn:hover  { border-color: rgba(255,255,255,0.28); color: rgba(255,255,255,0.75); }
+    .gen-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .loading-msg {
+      display: none;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,0.28);
+      padding: 8px;
+    }
+
+    /* ── Scenario cards ── */
+    .scenarios-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .scenario-card {
+      background: transparent;
+      border: 0.5px solid rgba(255,255,255,0.08);
+      border-top: 2.5px solid;
+      border-radius: 0;
+      padding: 14px 16px;
+    }
+    .scenario-card.bull    { border-top-color: #4dba87; }
+    .scenario-card.neutral { border-top-color: #6e9ef5; }
+    .scenario-card.bear    { border-top-color: #e07070; }
+    .scenario-card.tail    { border-top-color: #a97de8; }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+    .card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .scenario-card.bull    .card-title { color: #4dba87; }
+    .scenario-card.neutral .card-title { color: #6e9ef5; }
+    .scenario-card.bear    .card-title { color: #e07070; }
+    .scenario-card.tail    .card-title { color: #a97de8; }
+
+    .prob-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 0;
+      white-space: nowrap;
+      letter-spacing: 0.04em;
+    }
+    .scenario-card.bull    .prob-badge { background: rgba(77,186,135,0.12);  color: #4dba87; }
+    .scenario-card.neutral .prob-badge { background: rgba(110,158,245,0.12); color: #6e9ef5; }
+    .scenario-card.bear    .prob-badge { background: rgba(220,100,100,0.12); color: #e07070; }
+    .scenario-card.tail    .prob-badge { background: rgba(169,125,232,0.12); color: #a97de8; }
+
+    .card-trigger {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.78);
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+    .card-trigger span { font-weight: 400; color: rgba(255,255,255,0.42); }
+
+    .card-desc {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.38);
+      line-height: 1.52;
+      margin-bottom: 11px;
+    }
+
+    .asset-row {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .asset-sep { color: rgba(255,255,255,0.18); }
+    .asset-item { display: flex; gap: 4px; align-items: center; }
+    .asset-label { font-weight: 700; }
+    .asset-val   { font-weight: 700; }
+    .scenario-card.bull    .asset-label, .scenario-card.bull    .asset-val { color: #4dba87; }
+    .scenario-card.neutral .asset-label, .scenario-card.neutral .asset-val { color: #6e9ef5; }
+    .scenario-card.bear    .asset-label, .scenario-card.bear    .asset-val { color: #e07070; }
+    .scenario-card.tail    .asset-label, .scenario-card.tail    .asset-val { color: #a97de8; }
+
+    /* ── Calendar strip ── */
+    .calendar-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .cal-day {
+      background: rgba(255,255,255,0.02);
+      border: 0.5px solid rgba(255,255,255,0.07);
+      border-radius: 0;
+      padding: 10px 12px;
+      min-height: 68px;
+    }
+    .cal-day.has-event    { background: rgba(255,255,255,0.035); border-color: rgba(255,255,255,0.12); }
+    .cal-day.high-impact  { border-color: rgba(245,195,90,0.25); background: rgba(245,195,90,0.04); }
+    .cal-day.war-event    { border-color: rgba(220,80,80,0.35);  background: rgba(220,60,60,0.06); }
+
+    .cal-day-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: rgba(255,255,255,0.28);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .cal-day.high-impact .cal-day-label { color: #f5c35a; }
+    .cal-day.war-event   .cal-day-label { color: #e07070; }
+
+    .cal-event-name {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.3;
+      margin-bottom: 3px;
+    }
+    .cal-event-sub {
+      font-size: 10.5px;
+      color: rgba(255,255,255,0.32);
+      line-height: 1.35;
+    }
+    .cal-empty { color: rgba(255,255,255,0.16); font-size: 11px; margin-top: 3px; }
+
+    /* ── Drivers ── */
+    .drivers-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 0;
+    }
+    .drivers-block {
+      border: 0.5px solid rgba(255,255,255,0.07);
+      border-radius: 0;
+      padding: 13px 15px;
+    }
+    .drivers-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #ffffff;
+      font-weight: 700;
+      margin-bottom: 9px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .driver-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      margin-bottom: 6px;
+      font-size: 11.5px;
+      line-height: 1.45;
+    }
+    .driver-item:last-child { margin-bottom: 0; }
+    .driver-arrow { font-size: 9px; margin-top: 2px; flex-shrink: 0; }
+    .driver-arrow.up   { color: #4dba87; }
+    .driver-arrow.down { color: #e07070; }
+    .driver-label  { font-weight: 500; color: rgba(255,255,255,0.72); }
+    .driver-detail { color: rgba(255,255,255,0.35); }
+
+    /* ── Footer ── */
+    .footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 28px 14px;
+    }
+    .footer-handle {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: rgba(255,255,255,0.18);
+      letter-spacing: 0.08em;
+    }
+    .footer-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: rgba(255,255,255,0.18);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ── Error banner ── */
+    .error-banner {
+      display: none;
+      background: rgba(220,80,80,0.1);
+      border: 0.5px solid rgba(220,80,80,0.3);
+      color: #e07070;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="rainbow-bar"></div>
+
+  <div class="top-nav">
+    <div class="nav-pill">Scenarios + Calendar + Drivers · 1/1</div>
+    <div class="week-range" id="week-label"></div>
+  </div>
+
+  <div class="main-content">
+
+    <div class="headline" id="headline">
+      Two Catalysts. <span class="accent-gold">FOMC Minutes</span> Wednesday.<br>
+      <span class="accent-teal">CPI Friday</span> Defines The Trend.
+    </div>
+    <div class="subhead" id="subhead">
+      FOMC Minutes on Wednesday (Apr 8, 2:00 PM ET) reveal March deliberations — hawkish/dovish tilt sets the stage.
+      CPI on Friday (Apr 10, 8:30 AM ET) is the inflation print that either validates or kills the rate-cut narrative.
+      Iran deadline tonight adds a tail risk layer across all scenarios.
+    </div>
+
+    <button class="gen-btn" id="gen-btn" onclick="generateScenarios()">Regenerate Scenarios</button>
+    <div class="error-banner" id="error-banner"></div>
+    <div class="loading-msg" id="loading-msg">Generating scenarios...</div>
+
+    <div class="scenarios-grid" id="scenarios-grid">
+      <div class="scenario-card bull">
+        <div class="card-header"><div class="card-title">Dovish Minutes + Cool CPI</div><div class="prob-badge">30%</div></div>
+        <div class="card-trigger">Minutes reveal rate-cut discussion. <span>CPI prints ≤2.8% YoY. Goldilocks.</span></div>
+        <div class="card-desc">Fed signals patience but not panic. Disinflation back on track. Risk-on across the board — equities rally, BTC breaks higher. Short-covering + momentum buyers pile in.</div>
+        <div class="asset-row">
+          <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;5,700–5,900</span></div>
+          <span class="asset-sep">·</span>
+          <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;$85–95K</span></div>
+          <span class="asset-sep">·</span>
+          <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;$95–105</span></div>
+        </div>
+      </div>
+      <div class="scenario-card neutral">
+        <div class="card-header"><div class="card-title">Stalemate + Data Driven</div><div class="prob-badge">40%</div></div>
+        <div class="card-trigger">"Talks ongoing" but no deal. <span>CPI in-line at 3.0–3.2%. Grind.</span></div>
+        <div class="card-desc">FOMC offers no new information. CPI neither hot nor cold. Market stays in wait-and-see. Range-bound chop. Iran deadline extends again — same playbook as March 21.</div>
+        <div class="asset-row">
+          <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;5,400–5,650</span></div>
+          <span class="asset-sep">·</span>
+          <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;$73–82K</span></div>
+          <span class="asset-sep">·</span>
+          <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;$105–115</span></div>
+        </div>
+      </div>
+      <div class="scenario-card bear">
+        <div class="card-header"><div class="card-title">Data Shock</div><div class="prob-badge">20%</div></div>
+        <div class="card-trigger">Hawkish minutes + CPI re-accelerates above 3.3%. <span>Stagflation fear returns.</span></div>
+        <div class="card-desc">Fed trapped — can't cut with inflation sticky. Treasury yields spike. Risk-off. Equities test lows. DXY strengthens. BTC correlates down. Iran escalation amplifies.</div>
+        <div class="asset-row">
+          <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;5,100–5,350</span></div>
+          <span class="asset-sep">·</span>
+          <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;$60–72K</span></div>
+          <span class="asset-sep">·</span>
+          <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;$115+</span></div>
+        </div>
+      </div>
+      <div class="scenario-card tail">
+        <div class="card-header"><div class="card-title">Escalation / Iran Strikes</div><div class="prob-badge">10%</div></div>
+        <div class="card-trigger">Trump executes infrastructure strikes. <span>Iran closes Strait fully.</span></div>
+        <div class="card-desc">Oil spikes to $130–145. S&amp;P gaps down 4–5%. CPI and FOMC become irrelevant. Vol explosion. Gold outperforms. BTC flush then potential safe-haven bid later.</div>
+        <div class="asset-row">
+          <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;5,000–5,200</span></div>
+          <span class="asset-sep">·</span>
+          <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;$55–65K</span></div>
+          <span class="asset-sep">·</span>
+          <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;$130–145</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calendar-strip" id="calendar-strip">
+      <div class="cal-day war-event">
+        <div class="cal-day-label">Tue 4/7 🚨</div>
+        <div class="cal-event-name">Iran Deadline</div>
+        <div class="cal-event-sub">8PM ET. Hormuz ultimatum. Pattern is extension. Primary tail risk.</div>
+      </div>
+      <div class="cal-day high-impact">
+        <div class="cal-day-label">Wed 4/8 ★</div>
+        <div class="cal-event-name">FOMC Minutes</div>
+        <div class="cal-event-sub">2:00 PM ET. Mar deliberations. Tone = primary signal this week.</div>
+      </div>
+      <div class="cal-day has-event">
+        <div class="cal-day-label">Thu 4/9</div>
+        <div class="cal-event-name">Jobless Claims</div>
+        <div class="cal-event-sub">8:30 AM ET. Pre-CPI positioning. Last signal before Friday.</div>
+      </div>
+      <div class="cal-day high-impact">
+        <div class="cal-day-label">Fri 4/10 ⚡</div>
+        <div class="cal-event-name">CPI (Mar)</div>
+        <div class="cal-event-sub">8:30 AM ET. Highest-impact print. Core ex-energy most watched.</div>
+      </div>
+      <div class="cal-day">
+        <div class="cal-day-label">Ongoing</div>
+        <div class="cal-event-name">Hormuz Flow</div>
+        <div class="cal-event-sub">8 tankers/day vs 20M bbl prewar. Watch for resumption signal.</div>
+      </div>
+    </div>
+
+    <div class="drivers-row">
+      <div class="drivers-block" id="equity-drivers">
+        <div class="drivers-title">▦ &nbsp;Equity Drivers</div>
+        <div class="driver-item"><span class="driver-arrow up">▲</span><div><span class="driver-label">"Iran deal materializes"</span><span class="driver-detail"> → oil drops $15–25 → short covering rally. Biggest upside — nobody positioned.</span></div></div>
+        <div class="driver-item"><span class="driver-arrow up">▲</span><div><span class="driver-label">Dovish minutes + cool CPI</span><span class="driver-detail"> → rate-cut timeline pulled forward → multiple expansion → gap up potential.</span></div></div>
+        <div class="driver-item"><span class="driver-arrow down">▼</span><div><span class="driver-label">Dow/Nasdaq in correction.</span><span class="driver-detail"> S&amp;P -8.7% from peak. Earnings estimates not yet revised down. Risk mispriced.</span></div></div>
+        <div class="driver-item"><span class="driver-arrow down">▼</span><div><span class="driver-label">Hot CPI + hawkish tone</span><span class="driver-detail"> = stagflation narrative. Fed paralyzed. Yields spike. Equities reprice lower.</span></div></div>
+      </div>
+      <div class="drivers-block" id="btc-drivers">
+        <div class="drivers-title">₿ &nbsp;Bitcoin Drivers</div>
+        <div class="driver-item"><span class="driver-arrow up">▲</span><div><span class="driver-label">Bad NFP = bullish paradox.</span><span class="driver-detail"> Job losses → Fed forced to cut → liquidity → BTC runs. F&amp;G at 15 = contrarian signal.</span></div></div>
+        <div class="driver-item"><span class="driver-arrow up">▲</span><div><span class="driver-label">Ceasefire = explosive.</span><span class="driver-detail"> Oil drops → risk-on → BTC breaks $85K. Institutional rotation follows.</span></div></div>
+        <div class="driver-item"><span class="driver-arrow down">▼</span><div><span class="driver-label">$73K testing lower range.</span><span class="driver-detail"> Rising floor under pressure. DXY above 100. Watch for breakdown vs. hold.</span></div></div>
+        <div class="driver-item"><span class="driver-arrow down">▼</span><div><span class="driver-label">Hot CPI = higher-for-longer.</span><span class="driver-detail"> No liquidity catalyst. BTC correlates with risk-off. Iran escalation = initial flush.</span></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bar">
+    <div class="footer-handle">@ceruleus_capital</div>
+    <div class="footer-tag" id="footer-tag">Scenarios + Calendar · Ceruleus Capital</div>
+  </div>
+
+  <script>
+    // ── Config ──────────────────────────────────────────────────
+    // Replace this URL after deploying your Cloudflare Worker
+    const WORKER_URL = 'PASTE_WORKER_URL_HERE';
+
+    // ── Trading week (Mon–Fri), locked on load ───────────────────
+    function getTradingWeek() {
+      const now = new Date();
+      const day = now.getDay();
+      const diffToMon = day === 0 ? -6 : 1 - day;
+      const mon = new Date(now);
+      mon.setDate(now.getDate() + diffToMon);
+      const fri = new Date(mon);
+      fri.setDate(mon.getDate() + 4);
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      return `Week of ${months[mon.getMonth()]} ${mon.getDate()} – ${months[fri.getMonth()]} ${fri.getDate()}, ${fri.getFullYear()}`;
+    }
+
+    const TRADING_WEEK = getTradingWeek();
+    document.getElementById('week-label').textContent = TRADING_WEEK;
+
+    // ── Render helpers ───────────────────────────────────────────
+    function renderScenarios(scenarios) {
+      document.getElementById('scenarios-grid').innerHTML = scenarios.map(s => `
+        <div class="scenario-card ${s.type}">
+          <div class="card-header">
+            <div class="card-title">${s.title}</div>
+            <div class="prob-badge">${s.prob.replace(/~/g, '')}</div>
+          </div>
+          <div class="card-trigger">${s.trigger} <span>${s.trigger_sub}</span></div>
+          <div class="card-desc">${s.desc}</div>
+          <div class="asset-row">
+            <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;${s.sp}</span></div>
+            <span class="asset-sep">·</span>
+            <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;${s.btc}</span></div>
+            <span class="asset-sep">·</span>
+            <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;${s.oil}</span></div>
+          </div>
+        </div>`).join('');
+    }
+
+    function renderDrivers(drivers, blockId) {
+      const block = document.getElementById(blockId);
+      const title = block.querySelector('.drivers-title').outerHTML;
+      block.innerHTML = title + drivers.map(d => `
+        <div class="driver-item">
+          <span class="driver-arrow ${d.dir}">${d.dir === 'up' ? '▲' : '▼'}</span>
+          <div><span class="driver-label">${d.label}</span><span class="driver-detail">${d.detail}</span></div>
+        </div>`).join('');
+    }
+
+    function renderHeadline(raw) {
+      const lines = raw.split('|').map(p =>
+        p.trim()
+         .replace(/\[gold\](.*?)\[\/gold\]/g, '<span class="accent-gold">$1</span>')
+         .replace(/\[teal\](.*?)\[\/teal\]/g, '<span class="accent-teal">$1</span>')
+         .replace(/\[red\](.*?)\[\/red\]/g,   '<span class="accent-red">$1</span>')
+      );
+      document.getElementById('headline').innerHTML = lines.join('<br>');
+    }
+
+    // ── Generate scenarios ───────────────────────────────────────
+    async function generateScenarios() {
+      const btn = document.getElementById('gen-btn');
+      const loadingMsg = document.getElementById('loading-msg');
+      const errorBanner = document.getElementById('error-banner');
+
+      btn.disabled = true;
+      btn.textContent = 'Generating...';
+      loadingMsg.style.display = 'block';
+      errorBanner.style.display = 'none';
+
+      const prompt = `You are a macro trading analyst at a family office. Based on this week's key events, generate 4 market scenarios in compact JSON.
+
+Context: Week of ${TRADING_WEEK}. Current macro backdrop: monitor Iran/Hormuz situation, Fed policy path, inflation data, and any geopolitical developments.
+
+Return ONLY valid JSON, no markdown. Probabilities must NOT include a ~ symbol:
+{
+  "headline": "2-line headline split with |, max 10 words per line, tag key terms like [gold]text[/gold] or [teal]text[/teal] or [red]text[/red]",
+  "subhead": "1-2 sentence context summary under 220 chars",
+  "scenarios": [
+    {"type":"bull","title":"4-6 words","prob":"X%","trigger":"trigger condition max 10 words","trigger_sub":"secondary detail max 10 words","desc":"2-3 sentence narrative","sp":"range","btc":"range","oil":"range"},
+    {"type":"neutral","title":"...","prob":"...","trigger":"...","trigger_sub":"...","desc":"...","sp":"...","btc":"...","oil":"..."},
+    {"type":"bear","title":"...","prob":"...","trigger":"...","trigger_sub":"...","desc":"...","sp":"...","btc":"...","oil":"..."},
+    {"type":"tail","title":"...","prob":"...","trigger":"...","trigger_sub":"...","desc":"...","sp":"...","btc":"...","oil":"..."}
+  ],
+  "equity_drivers":[
+    {"dir":"up","label":"short label","detail":" → consequence chain"},
+    {"dir":"up","label":"short label","detail":" → consequence chain"},
+    {"dir":"down","label":"short label","detail":" → consequence chain"},
+    {"dir":"down","label":"short label","detail":" → consequence chain"}
+  ],
+  "btc_drivers":[
+    {"dir":"up","label":"short label","detail":" → consequence chain"},
+    {"dir":"up","label":"short label","detail":" → consequence chain"},
+    {"dir":"down","label":"short label","detail":" → consequence chain"},
+    {"dir":"down","label":"short label","detail":" → consequence chain"}
+  ]
+}`;
+
+      try {
+        const resp = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+
+        if (!resp.ok) throw new Error(`Worker responded ${resp.status}`);
+
+        const data = await resp.json();
+        const raw = (data.text || '').replace(/```json|```/g, '').trim();
+        const d = JSON.parse(raw);
+
+        if (d.headline) renderHeadline(d.headline);
+        if (d.subhead)  document.getElementById('subhead').textContent = d.subhead;
+        if (d.scenarios?.length === 4) renderScenarios(d.scenarios);
+        if (d.equity_drivers) renderDrivers(d.equity_drivers, 'equity-drivers');
+        if (d.btc_drivers)    renderDrivers(d.btc_drivers,    'btc-drivers');
+
+        document.getElementById('week-label').textContent = TRADING_WEEK;
+
+      } catch (err) {
+        errorBanner.textContent = `Generation failed: ${err.message}. Check your Worker URL is configured.`;
+        errorBanner.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Regenerate Scenarios';
+        loadingMsg.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
