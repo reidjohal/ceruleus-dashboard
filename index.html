@@ -322,6 +322,7 @@
             </div>
           </div>
           <div class="chart-stats" id="stats-basis">
+            <div class="cstat"><div class="cstat-label">Perp</div><div class="cstat-val" style="color:#e8e6e0" id="b-perp">0%</div></div>
             <div class="cstat"><div class="cstat-label" id="b-label-1">Quarterly</div><div class="cstat-val teal" id="b-q1">—</div></div>
             <div class="cstat"><div class="cstat-label" id="b-label-2">Biquarterly</div><div class="cstat-val blue" id="b-q2">—</div></div>
             <div class="cstat"><div class="cstat-label" id="b-label-3">Third</div><div class="cstat-val gold" id="b-q3">—</div></div>
@@ -329,9 +330,10 @@
           </div>
           <div class="chart-area"><canvas id="canvas-basis"></canvas></div>
           <div class="chart-legend" id="basis-legend">
-            <span class="leg"><span class="leg-line teal-bg"></span><span id="leg-q1">Quarterly</span></span>
-            <span class="leg"><span class="leg-line blue-bg"></span><span id="leg-q2">Biquarterly</span></span>
-            <span class="leg"><span class="leg-line gold-bg"></span><span id="leg-q3">Third</span></span>
+            <span class="leg"><span class="leg-dot" style="background:#e8e6e0"></span>Perp (anchor)</span>
+            <span class="leg"><span class="leg-dot teal-bg"></span><span id="leg-q1">Quarterly</span></span>
+            <span class="leg"><span class="leg-dot blue-bg"></span><span id="leg-q2">Biquarterly</span></span>
+            <span class="leg"><span class="leg-dot gold-bg"></span><span id="leg-q3">Third</span></span>
           </div>
         </div>
 
@@ -617,13 +619,16 @@
 
     async function fetchDeribitBasis() {
       try {
-        const [instrumentsRes, indexRes] = await Promise.all([
+        const [instrumentsRes, indexRes, perpRes] = await Promise.all([
           fetch('https://www.deribit.com/api/v2/public/get_instruments?currency=BTC&kind=future&expired=false'),
-          fetch('https://www.deribit.com/api/v2/public/get_index_price?index_name=btc_usd')
+          fetch('https://www.deribit.com/api/v2/public/get_index_price?index_name=btc_usd'),
+          fetch('https://www.deribit.com/api/v2/public/ticker?instrument_name=BTC-PERPETUAL')
         ]);
         const instrumentsData = await instrumentsRes.json();
         const indexData = await indexRes.json();
+        const perpData = await perpRes.json();
         const spotPrice = indexData.result?.index_price || 0;
+        const perpPrice = perpData.result?.last_price || spotPrice;
 
         // Filter for quarterly futures (exclude perpetual)
         const quarters = instrumentsData.result
@@ -646,14 +651,14 @@
           const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
           return {
             name: q.instrument_name,
-            label: `${monthNames[expDate.getMonth()]} ${expDate.getFullYear()}`,
+            label: `${monthNames[expDate.getMonth()]} '${String(expDate.getFullYear()).slice(2)}`,
             price: ticker.last_price,
             basis: basis,
             days: days
           };
         });
 
-        return { spotPrice, contracts };
+        return { spotPrice, perpPrice, contracts };
       } catch (e) {
         console.error('Deribit fetch error:', e);
         return null;
@@ -662,13 +667,16 @@
 
     async function fetchOKXBasis() {
       try {
-        const [instrumentsRes, spotRes] = await Promise.all([
+        const [instrumentsRes, spotRes, swapRes] = await Promise.all([
           fetch('https://www.okx.com/api/v5/public/instruments?instType=FUTURES&instFamily=BTC-USD'),
-          fetch('https://www.okx.com/api/v5/market/index-tickers?instId=BTC-USD')
+          fetch('https://www.okx.com/api/v5/market/index-tickers?instId=BTC-USD'),
+          fetch('https://www.okx.com/api/v5/market/ticker?instId=BTC-USD-SWAP')
         ]);
         const instrumentsData = await instrumentsRes.json();
         const spotData = await spotRes.json();
+        const swapData = await swapRes.json();
         const spotPrice = parseFloat(spotData.data?.[0]?.idxPx) || 0;
+        const perpPrice = parseFloat(swapData.data?.[0]?.last) || spotPrice;
 
         // Filter for delivery futures (quarterly/biquarterly)
         const futures = instrumentsData.data
@@ -691,14 +699,14 @@
           const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
           return {
             name: f.instId,
-            label: f.alias === 'quarter' ? 'Quarterly' : 'Biquarterly',
+            label: `${monthNames[expDate.getMonth()]} '${String(expDate.getFullYear()).slice(2)}`,
             price: price,
             basis: basis,
             days: days
           };
         });
 
-        return { spotPrice, contracts };
+        return { spotPrice, perpPrice, contracts };
       } catch (e) {
         console.error('OKX fetch error:', e);
         return null;
@@ -707,16 +715,19 @@
 
     async function fetchBinanceBasis() {
       try {
-        const [infoRes, priceRes] = await Promise.all([
+        const [infoRes, priceRes, spotRes] = await Promise.all([
           fetch('https://dapi.binance.com/dapi/v1/exchangeInfo'),
-          fetch('https://dapi.binance.com/dapi/v1/ticker/price')
+          fetch('https://dapi.binance.com/dapi/v1/ticker/price'),
+          fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
         ]);
         const infoData = await infoRes.json();
         const priceData = await priceRes.json();
+        const spotData = await spotRes.json();
 
-        // Get spot price from BTCUSD_PERP mark price
-        const perpPrice = priceData.find(p => p.symbol === 'BTCUSD_PERP');
-        const spotPrice = parseFloat(perpPrice?.price) || 0;
+        // Get perp price and spot price
+        const perpTicker = priceData.find(p => p.symbol === 'BTCUSD_PERP');
+        const perpPrice = parseFloat(perpTicker?.price) || 0;
+        const spotPrice = parseFloat(spotData?.price) || perpPrice;
 
         // Filter for BTC delivery futures (not perpetual)
         const deliveryFutures = infoData.symbols
@@ -735,14 +746,14 @@
           const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
           return {
             name: f.symbol,
-            label: f.contractType === 'CURRENT_QUARTER' ? 'Quarterly' : 'Biquarterly',
+            label: `${monthNames[expDate.getMonth()]} '${String(expDate.getFullYear()).slice(2)}`,
             price: price,
             basis: basis,
             days: days
           };
         });
 
-        return { spotPrice, contracts };
+        return { spotPrice, perpPrice, contracts };
       } catch (e) {
         console.error('Binance fetch error:', e);
         return null;
@@ -768,7 +779,7 @@
     }
 
     function renderBasisChart(data) {
-      const { spotPrice, contracts } = data;
+      const { spotPrice, perpPrice, contracts } = data;
 
       // Update stat labels and values
       document.getElementById('b-spot').textContent = '$' + spotPrice.toLocaleString(undefined, {maximumFractionDigits: 0});
@@ -795,35 +806,91 @@
         document.getElementById('leg-q3').textContent = '—';
       }
 
-      // Build single-point chart (current basis values)
+      // Build term structure line chart with perp as anchor at 0%
       if (charts.basis) charts.basis.destroy();
       const cfg = chartDefaults();
       cfg.scales.y.ticks.callback = v => v.toFixed(0) + '%';
-      cfg.scales.x.display = false;
 
-      const datasets = [];
-      if (q1) datasets.push({ label: q1.label, data: [q1.basis], borderColor: '#4dba87', backgroundColor: 'rgba(77,186,135,0.3)', borderWidth: 2, pointRadius: 6, pointBackgroundColor: '#4dba87' });
-      if (q2) datasets.push({ label: q2.label, data: [q2.basis], borderColor: '#6e9ef5', backgroundColor: 'rgba(110,158,245,0.3)', borderWidth: 2, pointRadius: 6, pointBackgroundColor: '#6e9ef5' });
-      if (q3) datasets.push({ label: q3.label, data: [q3.basis], borderColor: '#f5c35a', backgroundColor: 'rgba(245,195,90,0.3)', borderWidth: 2, pointRadius: 6, pointBackgroundColor: '#f5c35a' });
+      // X-axis labels: Perp → Q1 → Q2 → Q3
+      const labels = ['Perp'];
+      const basisValues = [0]; // Perp anchored at 0%
+      const colors = ['#e8e6e0']; // Perp is white/neutral
 
-      // Create a bar chart for clearer visualization of current basis
+      if (q1) {
+        labels.push(q1.label);
+        basisValues.push(q1.basis);
+        colors.push('#4dba87');
+      }
+      if (q2) {
+        labels.push(q2.label);
+        basisValues.push(q2.basis);
+        colors.push('#6e9ef5');
+      }
+      if (q3) {
+        labels.push(q3.label);
+        basisValues.push(q3.basis);
+        colors.push('#f5c35a');
+      }
+
+      // Determine if in contango or backwardation
+      const avgBasis = contracts.reduce((sum, c) => sum + c.basis, 0) / contracts.length;
+      const structure = avgBasis > 2 ? 'Contango' : avgBasis < -2 ? 'Backwardation' : 'Flat';
+
+      // Create line chart showing term structure
       charts.basis = makeChart('canvas-basis', {
-        type: 'bar',
+        type: 'line',
         data: {
-          labels: datasets.map(d => d.label),
+          labels: labels,
           datasets: [{
-            label: 'Annualized Basis',
-            data: datasets.map(d => d.data[0]),
-            backgroundColor: ['rgba(77,186,135,0.6)', 'rgba(110,158,245,0.6)', 'rgba(245,195,90,0.6)'].slice(0, datasets.length),
-            borderColor: ['#4dba87', '#6e9ef5', '#f5c35a'].slice(0, datasets.length),
-            borderWidth: 1
+            label: 'Term Structure',
+            data: basisValues,
+            borderColor: '#6e9ef5',
+            backgroundColor: 'rgba(110,158,245,0.1)',
+            borderWidth: 2,
+            pointRadius: 6,
+            pointBackgroundColor: colors,
+            pointBorderColor: colors,
+            pointBorderWidth: 2,
+            tension: 0.3,
+            fill: true
           }]
         },
         options: {
           ...cfg,
           scales: {
             ...cfg.scales,
-            x: { ...cfg.scales.x, display: true }
+            x: { ...cfg.scales.x, display: true },
+            y: {
+              ...cfg.scales.y,
+              ticks: {
+                ...cfg.scales.y.ticks,
+                callback: v => v.toFixed(0) + '%'
+              }
+            }
+          },
+          plugins: {
+            ...cfg.plugins,
+            annotation: {
+              annotations: {
+                zeroLine: {
+                  type: 'line',
+                  yMin: 0,
+                  yMax: 0,
+                  borderColor: 'rgba(255,255,255,0.2)',
+                  borderWidth: 1,
+                  borderDash: [4, 4]
+                }
+              }
+            },
+            tooltip: {
+              ...cfg.plugins.tooltip,
+              callbacks: {
+                label: function(context) {
+                  const val = context.parsed.y;
+                  return `Basis: ${val >= 0 ? '+' : ''}${val.toFixed(2)}%`;
+                }
+              }
+            }
           }
         }
       });
