@@ -311,26 +311,27 @@
           <div class="chart-card-header">
             <div>
               <div class="chart-card-title">Quarterly Basis</div>
-              <div class="chart-card-sub">Annualized futures premium vs. spot · Deribit</div>
+              <div class="chart-card-sub" id="basis-sub">Annualized futures premium vs. spot · Deribit</div>
             </div>
-            <div class="chart-tabs" id="tabs-basis">
-              <button class="ctab active" onclick="setTab('basis','1M',this)">1M</button>
-              <button class="ctab" onclick="setTab('basis','3M',this)">3M</button>
-              <button class="ctab" onclick="setTab('basis','6M',this)">6M</button>
-              <button class="ctab" onclick="setTab('basis','1Y',this)">1Y</button>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
+              <div class="chart-tabs" id="basis-exchange-tabs">
+                <button class="ctab active" onclick="setBasisExchange('deribit',this)">Deribit</button>
+                <button class="ctab" onclick="setBasisExchange('okx',this)">OKX</button>
+                <button class="ctab" onclick="setBasisExchange('binance',this)">Binance</button>
+              </div>
             </div>
           </div>
           <div class="chart-stats" id="stats-basis">
-            <div class="cstat"><div class="cstat-label">Jun 2026</div><div class="cstat-val teal" id="b-jun">—</div></div>
-            <div class="cstat"><div class="cstat-label">Sep 2026</div><div class="cstat-val blue" id="b-sep">—</div></div>
-            <div class="cstat"><div class="cstat-label">Dec 2026</div><div class="cstat-val gold" id="b-dec">—</div></div>
-            <div class="cstat"><div class="cstat-label">Signal</div><div class="cstat-val" id="b-sig">—</div></div>
+            <div class="cstat"><div class="cstat-label" id="b-label-1">Quarterly</div><div class="cstat-val teal" id="b-q1">—</div></div>
+            <div class="cstat"><div class="cstat-label" id="b-label-2">Biquarterly</div><div class="cstat-val blue" id="b-q2">—</div></div>
+            <div class="cstat"><div class="cstat-label" id="b-label-3">Third</div><div class="cstat-val gold" id="b-q3">—</div></div>
+            <div class="cstat"><div class="cstat-label">Spot</div><div class="cstat-val" id="b-spot">—</div></div>
           </div>
           <div class="chart-area"><canvas id="canvas-basis"></canvas></div>
-          <div class="chart-legend">
-            <span class="leg"><span class="leg-line teal-bg"></span>Jun 2026</span>
-            <span class="leg"><span class="leg-line blue-bg"></span>Sep 2026</span>
-            <span class="leg"><span class="leg-line gold-bg"></span>Dec 2026</span>
+          <div class="chart-legend" id="basis-legend">
+            <span class="leg"><span class="leg-line teal-bg"></span><span id="leg-q1">Quarterly</span></span>
+            <span class="leg"><span class="leg-line blue-bg"></span><span id="leg-q2">Biquarterly</span></span>
+            <span class="leg"><span class="leg-line gold-bg"></span><span id="leg-q3">Third</span></span>
           </div>
         </div>
 
@@ -591,33 +592,245 @@
     const charts = {};
 
     // ── 1. Quarterly Basis ───────────────────────────────────────
-    function buildBasis(range) {
-      const n = {  '1M': 30, '3M': 90, '6M': 180, '1Y': 365 }[range] || 30;
-      const unit = n <= 30 ? 'day' : 'week';
-      const labels = genLabels(Math.min(n, 52), unit);
-      const pts = labels.length;
-      const jun = genLine(pts, 8.5,  1.2, -0.03);
-      const sep = genLine(pts, 11.5, 1.0, -0.02);
-      const dec = genLine(pts, 14.0, 0.9, -0.015);
-      document.getElementById('b-jun').textContent = `+${jun[pts-1].toFixed(1)}%`;
-      document.getElementById('b-sep').textContent = `+${sep[pts-1].toFixed(1)}%`;
-      document.getElementById('b-dec').textContent = `+${dec[pts-1].toFixed(1)}%`;
-      const sig = sep[pts-1];
-      const sigEl = document.getElementById('b-sig');
-      sigEl.textContent = sig > 14 ? 'Bullish' : sig < 6 ? 'Bearish' : 'Neutral';
-      sigEl.className = 'cstat-val ' + (sig > 14 ? 'teal' : sig < 6 ? 'red' : 'blue');
+    let basisExchange = 'deribit';
+    let basisData = { deribit: null, okx: null, binance: null };
+
+    function setBasisExchange(exchange, el) {
+      basisExchange = exchange;
+      document.querySelectorAll('#basis-exchange-tabs .ctab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      const exchangeNames = { deribit: 'Deribit', okx: 'OKX', binance: 'Binance' };
+      document.getElementById('basis-sub').textContent = `Annualized futures premium vs. spot · ${exchangeNames[exchange]}`;
+      fetchBasisData(exchange);
+    }
+
+    function calcAnnualizedBasis(futuresPrice, spotPrice, daysToExpiry) {
+      if (!spotPrice || !futuresPrice || daysToExpiry <= 0) return 0;
+      return ((futuresPrice - spotPrice) / spotPrice) * (365 / daysToExpiry) * 100;
+    }
+
+    function daysUntil(dateStr) {
+      const expiry = new Date(dateStr);
+      const now = new Date();
+      return Math.max(1, Math.ceil((expiry - now) / (1000 * 60 * 60 * 24)));
+    }
+
+    async function fetchDeribitBasis() {
+      try {
+        const [instrumentsRes, indexRes] = await Promise.all([
+          fetch('https://www.deribit.com/api/v2/public/get_instruments?currency=BTC&kind=future&expired=false'),
+          fetch('https://www.deribit.com/api/v2/public/get_index_price?index_name=btc_usd')
+        ]);
+        const instrumentsData = await instrumentsRes.json();
+        const indexData = await indexRes.json();
+        const spotPrice = indexData.result?.index_price || 0;
+
+        // Filter for quarterly futures (exclude perpetual)
+        const quarters = instrumentsData.result
+          .filter(i => i.settlement_period === 'month' && i.instrument_name !== 'BTC-PERPETUAL')
+          .sort((a, b) => a.expiration_timestamp - b.expiration_timestamp)
+          .slice(0, 3);
+
+        if (quarters.length === 0) return null;
+
+        // Fetch tickers for each quarterly
+        const tickers = await Promise.all(
+          quarters.map(q => fetch(`https://www.deribit.com/api/v2/public/ticker?instrument_name=${q.instrument_name}`).then(r => r.json()))
+        );
+
+        const contracts = quarters.map((q, i) => {
+          const ticker = tickers[i].result;
+          const days = daysUntil(new Date(q.expiration_timestamp));
+          const basis = calcAnnualizedBasis(ticker.last_price, spotPrice, days);
+          const expDate = new Date(q.expiration_timestamp);
+          const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          return {
+            name: q.instrument_name,
+            label: `${monthNames[expDate.getMonth()]} ${expDate.getFullYear()}`,
+            price: ticker.last_price,
+            basis: basis,
+            days: days
+          };
+        });
+
+        return { spotPrice, contracts };
+      } catch (e) {
+        console.error('Deribit fetch error:', e);
+        return null;
+      }
+    }
+
+    async function fetchOKXBasis() {
+      try {
+        const [instrumentsRes, spotRes] = await Promise.all([
+          fetch('https://www.okx.com/api/v5/public/instruments?instType=FUTURES&instFamily=BTC-USD'),
+          fetch('https://www.okx.com/api/v5/market/index-tickers?instId=BTC-USD')
+        ]);
+        const instrumentsData = await instrumentsRes.json();
+        const spotData = await spotRes.json();
+        const spotPrice = parseFloat(spotData.data?.[0]?.idxPx) || 0;
+
+        // Filter for delivery futures (quarterly/biquarterly)
+        const futures = instrumentsData.data
+          .filter(i => i.alias === 'quarter' || i.alias === 'next_quarter')
+          .sort((a, b) => parseInt(a.expTime) - parseInt(b.expTime));
+
+        if (futures.length === 0) return null;
+
+        // Fetch tickers for each future
+        const tickers = await Promise.all(
+          futures.map(f => fetch(`https://www.okx.com/api/v5/market/ticker?instId=${f.instId}`).then(r => r.json()))
+        );
+
+        const contracts = futures.map((f, i) => {
+          const ticker = tickers[i].data?.[0];
+          const days = daysUntil(new Date(parseInt(f.expTime)));
+          const price = parseFloat(ticker?.last) || 0;
+          const basis = calcAnnualizedBasis(price, spotPrice, days);
+          const expDate = new Date(parseInt(f.expTime));
+          const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          return {
+            name: f.instId,
+            label: f.alias === 'quarter' ? 'Quarterly' : 'Biquarterly',
+            price: price,
+            basis: basis,
+            days: days
+          };
+        });
+
+        return { spotPrice, contracts };
+      } catch (e) {
+        console.error('OKX fetch error:', e);
+        return null;
+      }
+    }
+
+    async function fetchBinanceBasis() {
+      try {
+        const [infoRes, priceRes] = await Promise.all([
+          fetch('https://dapi.binance.com/dapi/v1/exchangeInfo'),
+          fetch('https://dapi.binance.com/dapi/v1/ticker/price')
+        ]);
+        const infoData = await infoRes.json();
+        const priceData = await priceRes.json();
+
+        // Get spot price from BTCUSD_PERP mark price
+        const perpPrice = priceData.find(p => p.symbol === 'BTCUSD_PERP');
+        const spotPrice = parseFloat(perpPrice?.price) || 0;
+
+        // Filter for BTC delivery futures (not perpetual)
+        const deliveryFutures = infoData.symbols
+          .filter(s => s.baseAsset === 'BTC' && s.contractType !== 'PERPETUAL' && s.contractStatus === 'TRADING')
+          .sort((a, b) => a.deliveryDate - b.deliveryDate)
+          .slice(0, 2);
+
+        if (deliveryFutures.length === 0) return null;
+
+        const contracts = deliveryFutures.map(f => {
+          const ticker = priceData.find(p => p.symbol === f.symbol);
+          const days = daysUntil(new Date(f.deliveryDate));
+          const price = parseFloat(ticker?.price) || 0;
+          const basis = calcAnnualizedBasis(price, spotPrice, days);
+          const expDate = new Date(f.deliveryDate);
+          const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          return {
+            name: f.symbol,
+            label: f.contractType === 'CURRENT_QUARTER' ? 'Quarterly' : 'Biquarterly',
+            price: price,
+            basis: basis,
+            days: days
+          };
+        });
+
+        return { spotPrice, contracts };
+      } catch (e) {
+        console.error('Binance fetch error:', e);
+        return null;
+      }
+    }
+
+    async function fetchBasisData(exchange) {
+      let data = null;
+      if (exchange === 'deribit') data = await fetchDeribitBasis();
+      else if (exchange === 'okx') data = await fetchOKXBasis();
+      else if (exchange === 'binance') data = await fetchBinanceBasis();
+
+      if (!data || !data.contracts || data.contracts.length === 0) {
+        document.getElementById('b-q1').textContent = 'Error';
+        document.getElementById('b-q2').textContent = '—';
+        document.getElementById('b-q3').textContent = '—';
+        document.getElementById('b-spot').textContent = '—';
+        return;
+      }
+
+      basisData[exchange] = data;
+      renderBasisChart(data);
+    }
+
+    function renderBasisChart(data) {
+      const { spotPrice, contracts } = data;
+
+      // Update stat labels and values
+      document.getElementById('b-spot').textContent = '$' + spotPrice.toLocaleString(undefined, {maximumFractionDigits: 0});
+
+      const q1 = contracts[0];
+      const q2 = contracts[1];
+      const q3 = contracts[2];
+
+      document.getElementById('b-label-1').textContent = q1?.label || 'N/A';
+      document.getElementById('b-q1').textContent = q1 ? `${q1.basis >= 0 ? '+' : ''}${q1.basis.toFixed(1)}%` : '—';
+      document.getElementById('leg-q1').textContent = q1?.label || 'N/A';
+
+      document.getElementById('b-label-2').textContent = q2?.label || 'N/A';
+      document.getElementById('b-q2').textContent = q2 ? `${q2.basis >= 0 ? '+' : ''}${q2.basis.toFixed(1)}%` : '—';
+      document.getElementById('leg-q2').textContent = q2?.label || 'N/A';
+
+      if (q3) {
+        document.getElementById('b-label-3').textContent = q3.label;
+        document.getElementById('b-q3').textContent = `${q3.basis >= 0 ? '+' : ''}${q3.basis.toFixed(1)}%`;
+        document.getElementById('leg-q3').textContent = q3.label;
+      } else {
+        document.getElementById('b-label-3').textContent = '—';
+        document.getElementById('b-q3').textContent = '—';
+        document.getElementById('leg-q3').textContent = '—';
+      }
+
+      // Build single-point chart (current basis values)
       if (charts.basis) charts.basis.destroy();
       const cfg = chartDefaults();
       cfg.scales.y.ticks.callback = v => v.toFixed(0) + '%';
+      cfg.scales.x.display = false;
+
+      const datasets = [];
+      if (q1) datasets.push({ label: q1.label, data: [q1.basis], borderColor: '#4dba87', backgroundColor: 'rgba(77,186,135,0.3)', borderWidth: 2, pointRadius: 6, pointBackgroundColor: '#4dba87' });
+      if (q2) datasets.push({ label: q2.label, data: [q2.basis], borderColor: '#6e9ef5', backgroundColor: 'rgba(110,158,245,0.3)', borderWidth: 2, pointRadius: 6, pointBackgroundColor: '#6e9ef5' });
+      if (q3) datasets.push({ label: q3.label, data: [q3.basis], borderColor: '#f5c35a', backgroundColor: 'rgba(245,195,90,0.3)', borderWidth: 2, pointRadius: 6, pointBackgroundColor: '#f5c35a' });
+
+      // Create a bar chart for clearer visualization of current basis
       charts.basis = makeChart('canvas-basis', {
-        type: 'line', data: { labels,
-          datasets: [
-            { label: 'Jun 2026', data: jun, borderColor: '#4dba87', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
-            { label: 'Sep 2026', data: sep, borderColor: '#6e9ef5', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
-            { label: 'Dec 2026', data: dec, borderColor: '#f5c35a', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
-          ]
-        }, options: cfg
+        type: 'bar',
+        data: {
+          labels: datasets.map(d => d.label),
+          datasets: [{
+            label: 'Annualized Basis',
+            data: datasets.map(d => d.data[0]),
+            backgroundColor: ['rgba(77,186,135,0.6)', 'rgba(110,158,245,0.6)', 'rgba(245,195,90,0.6)'].slice(0, datasets.length),
+            borderColor: ['#4dba87', '#6e9ef5', '#f5c35a'].slice(0, datasets.length),
+            borderWidth: 1
+          }]
+        },
+        options: {
+          ...cfg,
+          scales: {
+            ...cfg.scales,
+            x: { ...cfg.scales.x, display: true }
+          }
+        }
       });
+    }
+
+    function buildBasis() {
+      fetchBasisData(basisExchange);
     }
 
     // ── 2. Spread ────────────────────────────────────────────────
@@ -778,7 +991,7 @@
     }
 
     // Tab switching per chart
-    const tabBuilders = { basis: buildBasis, spread: buildSpread, volume: buildVolume, outliers: buildOutliers, region: buildRegion };
+    const tabBuilders = { spread: buildSpread, volume: buildVolume, outliers: buildOutliers, region: buildRegion };
     function setTab(chart, range, el) {
       el.closest('.chart-card').querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
       el.classList.add('active');

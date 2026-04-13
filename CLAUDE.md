@@ -81,7 +81,11 @@ All 5 charts on one page. Charts only initialise when user first visits the page
 Layout: 2 charts side by side (Row 1), 2 charts side by side (Row 2), 1 full-width chart (Row 3).
 
 **Charts:**
-1. **Quarterly Basis** — line chart, 3 lines (Jun/Sep/Dec), teal/blue/gold colors, time tabs: 1M/3M/6M/1Y
+1. **Quarterly Basis** — bar chart showing annualized basis, exchange tabs (Deribit/OKX/Binance), live API data
+   - Deribit: Fetches up to 3 quarterly contracts (Jun/Sep/Dec style naming)
+   - OKX: Quarterly + Biquarterly contracts via BTC-USD futures
+   - Binance: Quarterly + Biquarterly via COIN-margined delivery futures
+   - Shows spot price + annualized basis calculation: `((futures - spot) / spot) * (365 / days) * 100`
 2. **Market Spread** — line chart, BTC/ETH asset toggle + time tabs 1D/1W/1M
    - Colors: $1K = white `#e8e6e0`, $25K = light blue `#93c5fd`, $100K = blue `#3b82f6`
    - ETH spreads use tighter base values than BTC
@@ -115,9 +119,9 @@ Layout: 2 charts side by side (Row 1), 2 charts side by side (Row 2), 1 full-wid
 - [x] Nav with News Feed + Market Data dropdowns
 - [x] Market Data page with all 5 charts (random data)
 - [x] Spread chart has BTC/ETH toggle and blue color scheme
+- [x] Quarterly Basis wired to live APIs (Deribit, OKX, Binance) with exchange toggle
 
 ## What's Next
-- [ ] Wire Quarterly Basis to live Deribit API
 - [ ] Wire Spread to live Binance order book API
 - [ ] Wire Volume by Contract to live Binance API
 - [ ] Wire Volume Outliers to live Binance OHLCV API
