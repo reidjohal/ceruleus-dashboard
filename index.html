@@ -338,25 +338,31 @@
           <div class="chart-card-header">
             <div>
               <div class="chart-card-title">Market Spread</div>
-              <div class="chart-card-sub">Effective spread by order size · Binance spot</div>
+              <div class="chart-card-sub" id="spread-sub">Effective spread by order size · BTC · Binance spot</div>
             </div>
-            <div class="chart-tabs">
-              <button class="ctab active" onclick="setTab('spread','1D',this)">1D</button>
-              <button class="ctab" onclick="setTab('spread','1W',this)">1W</button>
-              <button class="ctab" onclick="setTab('spread','1M',this)">1M</button>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
+              <div class="chart-tabs" id="spread-asset-tabs">
+                <button class="ctab active" onclick="setSpreadAsset('BTC',this)">BTC</button>
+                <button class="ctab" onclick="setSpreadAsset('ETH',this)">ETH</button>
+              </div>
+              <div class="chart-tabs">
+                <button class="ctab active" onclick="setTab('spread','1D',this)">1D</button>
+                <button class="ctab" onclick="setTab('spread','1W',this)">1W</button>
+                <button class="ctab" onclick="setTab('spread','1M',this)">1M</button>
+              </div>
             </div>
           </div>
           <div class="chart-stats">
-            <div class="cstat"><div class="cstat-label">$1K Order</div><div class="cstat-val teal" id="s-1k">—</div></div>
-            <div class="cstat"><div class="cstat-label">$25K Order</div><div class="cstat-val blue" id="s-25k">—</div></div>
-            <div class="cstat"><div class="cstat-label">$100K Order</div><div class="cstat-val gold" id="s-100k">—</div></div>
+            <div class="cstat"><div class="cstat-label">$1K Order</div><div class="cstat-val" style="color:#e8e6e0" id="s-1k">—</div></div>
+            <div class="cstat"><div class="cstat-label">$25K Order</div><div class="cstat-val" style="color:#93c5fd" id="s-25k">—</div></div>
+            <div class="cstat"><div class="cstat-label">$100K Order</div><div class="cstat-val blue" id="s-100k">—</div></div>
             <div class="cstat"><div class="cstat-label">Liquidity</div><div class="cstat-val teal" id="s-liq">—</div></div>
           </div>
           <div class="chart-area"><canvas id="canvas-spread"></canvas></div>
           <div class="chart-legend">
-            <span class="leg"><span class="leg-line teal-bg"></span>$1K</span>
-            <span class="leg"><span class="leg-line blue-bg"></span>$25K</span>
-            <span class="leg"><span class="leg-line gold-bg"></span>$100K</span>
+            <span class="leg"><span class="leg-line" style="background:#e8e6e0"></span>$1K</span>
+            <span class="leg"><span class="leg-line" style="background:#93c5fd"></span>$25K</span>
+            <span class="leg"><span class="leg-line blue-bg"></span>$100K</span>
           </div>
         </div>
 
@@ -615,13 +621,29 @@
     }
 
     // ── 2. Spread ────────────────────────────────────────────────
+    let spreadAsset = 'BTC';
+    let spreadRange = '1D';
+
+    function setSpreadAsset(asset, el) {
+      spreadAsset = asset;
+      document.getElementById('spread-sub').textContent = `Effective spread by order size · ${asset} · Binance spot`;
+      document.querySelectorAll('#spread-asset-tabs .ctab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      buildSpread(spreadRange);
+    }
+
     function buildSpread(range) {
+      spreadRange = range;
       const n = { '1D': 48, '1W': 42, '1M': 30 }[range] || 48;
       const unit = range === '1D' ? 'hour' : 'day';
       const labels = genLabels(n, unit);
-      const s1   = genLine(n, 1.2,  0.2,  0);
-      const s25  = genLine(n, 4.8,  0.5,  0);
-      const s100 = genLine(n, 14.3, 1.4,  0);
+      // ETH spreads are tighter than BTC in bps
+      const base = spreadAsset === 'BTC'
+        ? { s1: 1.2, s25: 4.8, s100: 14.3 }
+        : { s1: 0.9, s25: 3.6, s100: 10.8 };
+      const s1   = genLine(n, base.s1,   0.2, 0);
+      const s25  = genLine(n, base.s25,  0.5, 0);
+      const s100 = genLine(n, base.s100, 1.4, 0);
       document.getElementById('s-1k').textContent   = s1[n-1].toFixed(1)   + ' bps';
       document.getElementById('s-25k').textContent  = s25[n-1].toFixed(1)  + ' bps';
       document.getElementById('s-100k').textContent = s100[n-1].toFixed(1) + ' bps';
@@ -635,9 +657,9 @@
       charts.spread = makeChart('canvas-spread', {
         type: 'line', data: { labels,
           datasets: [
-            { label: '$1K',   data: s1,   borderColor: '#4dba87', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
-            { label: '$25K',  data: s25,  borderColor: '#6e9ef5', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
-            { label: '$100K', data: s100, borderColor: '#f5c35a', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
+            { label: '$1K',   data: s1,   borderColor: '#e8e6e0', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
+            { label: '$25K',  data: s25,  borderColor: '#93c5fd', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
+            { label: '$100K', data: s100, borderColor: '#3b82f6', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
           ]
         }, options: cfg
       });
