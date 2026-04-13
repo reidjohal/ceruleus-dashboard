@@ -7,178 +7,69 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Cormorant+Garamond:wght@400;600;700&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
-    /* ── Reset & Base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
-    body {
-      background: #0d0f14;
-      color: #e8e6e0;
-      font-family: 'Space Grotesk', sans-serif;
-      min-height: 100vh;
-    }
+    body { background: #0d0f14; color: #e8e6e0; font-family: 'Space Grotesk', sans-serif; min-height: 100vh; }
+    .rainbow-bar { height: 3px; background: linear-gradient(90deg, #5b8dee, #6ecfb5, #f5c35a, #e07c6e, #b07cf5, #5b8dee); }
 
-    /* ── Rainbow bar ── */
-    .rainbow-bar {
-      height: 3px;
-      background: linear-gradient(90deg, #5b8dee, #6ecfb5, #f5c35a, #e07c6e, #b07cf5, #5b8dee);
-    }
+    /* ── Site Nav ── */
+    .site-nav { display: flex; justify-content: space-between; align-items: center; padding: 0 28px; height: 44px; border-bottom: 0.5px solid rgba(255,255,255,0.07); }
+    .site-nav-left { display: flex; align-items: center; }
+    .site-logo { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+    .site-nav-right { display: flex; align-items: center; }
+    .nav-items { display: flex; align-items: center; gap: 2px; }
+    .nav-dropdown { position: relative; }
+    .nav-dropdown-btn { display: flex; align-items: center; gap: 5px; padding: 6px 12px; background: transparent; border: none; font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); cursor: pointer; text-transform: uppercase; transition: color 0.15s; outline: none; }
+    .nav-dropdown-btn:hover { color: rgba(255,255,255,0.8); }
+    .nav-dropdown-btn.active { color: #f0ede6; }
+    .chevron { font-size: 8px; transition: transform 0.15s; opacity: 0.5; }
+    .nav-dropdown.open .chevron { transform: rotate(180deg); }
+    .nav-dropdown-menu { display: none; position: absolute; top: calc(100% + 4px); right: 0; background: #13151c; border: 0.5px solid rgba(255,255,255,0.12); min-width: 160px; z-index: 100; }
+    .nav-dropdown.open .nav-dropdown-menu { display: block; }
+    .nav-dropdown-item { display: block; width: 100%; padding: 9px 14px; background: transparent; border: none; border-bottom: 0.5px solid rgba(255,255,255,0.06); font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); cursor: pointer; text-align: left; text-transform: uppercase; transition: color 0.15s, background 0.15s; }
+    .nav-dropdown-item:last-child { border-bottom: none; }
+    .nav-dropdown-item:hover { color: #f0ede6; background: rgba(255,255,255,0.04); }
+    .nav-dropdown-item.active { color: #f0ede6; }
 
-    /* ── Top nav ── */
-    .top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 28px 0;
-    }
-    .nav-pill {
-      border: 0.5px solid rgba(255,255,255,0.2);
-      border-radius: 0;
-      padding: 5px 11px;
-      font-family: 'DM Mono', monospace;
-      font-size: 10.5px;
-      letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.5);
-      text-transform: uppercase;
-    }
-    .week-range {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: rgba(255,255,255,0.3);
-      letter-spacing: 0.05em;
-    }
+    /* ── Pages ── */
+    .page { display: none; }
+    .page.active { display: block; }
 
-    /* ── Main content ── */
+    /* ── News page ── */
+    .dashboard-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 28px 0; }
+    .nav-pill { border: 0.5px solid rgba(255,255,255,0.2); border-radius: 0; padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+    .week-range { font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.3); letter-spacing: 0.05em; }
     .main-content { padding: 20px 28px 0; }
-
-    .headline {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 44px;
-      font-weight: 700;
-      line-height: 1.08;
-      margin-bottom: 10px;
-      color: #f0ede6;
-      letter-spacing: -0.01em;
-    }
+    .headline { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 700; line-height: 1.08; margin-bottom: 10px; color: #f0ede6; letter-spacing: -0.01em; }
     .headline .accent-gold { color: #f5c35a; }
     .headline .accent-teal { color: #6ecfb5; }
     .headline .accent-red  { color: #e07070; }
-
-    .subhead {
-      font-size: 12px;
-      color: rgba(255,255,255,0.36);
-      line-height: 1.6;
-      max-width: 900px;
-      margin-bottom: 20px;
-    }
-
-    /* ── Regenerate button ── */
-    .gen-btn {
-      display: block;
-      width: 100%;
-      margin-bottom: 14px;
-      background: transparent;
-      border: 0.5px solid rgba(255,255,255,0.12);
-      border-radius: 0;
-      -webkit-border-radius: 0;
-      appearance: none;
-      -webkit-appearance: none;
-      color: rgba(255,255,255,0.4);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 12px;
-      font-weight: 400;
-      letter-spacing: 0.04em;
-      padding: 9px;
-      cursor: pointer;
-      text-align: center;
-      transition: border-color 0.15s, color 0.15s;
-      outline: none;
-    }
-    .gen-btn:hover  { border-color: rgba(255,255,255,0.28); color: rgba(255,255,255,0.75); }
+    .subhead { font-size: 12px; color: rgba(255,255,255,0.36); line-height: 1.6; max-width: 900px; margin-bottom: 20px; }
+    .gen-btn { display: block; width: 100%; margin-bottom: 14px; background: transparent; border: 0.5px solid rgba(255,255,255,0.12); border-radius: 0; -webkit-border-radius: 0; appearance: none; -webkit-appearance: none; color: rgba(255,255,255,0.4); font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.04em; padding: 9px; cursor: pointer; text-align: center; transition: border-color 0.15s, color 0.15s; outline: none; }
+    .gen-btn:hover { border-color: rgba(255,255,255,0.28); color: rgba(255,255,255,0.75); }
     .gen-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-    .loading-msg {
-      display: none;
-      text-align: center;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: rgba(255,255,255,0.28);
-      padding: 8px;
-    }
-
-    /* ── Scenario cards ── */
-    .scenarios-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    .scenario-card {
-      background: transparent;
-      border: 0.5px solid rgba(255,255,255,0.08);
-      border-top: 2.5px solid;
-      border-radius: 0;
-      padding: 14px 16px;
-    }
+    .loading-msg { display: none; text-align: center; font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.28); padding: 8px; }
+    .error-banner { display: none; background: rgba(220,80,80,0.1); border: 0.5px solid rgba(220,80,80,0.3); color: #e07070; font-family: 'DM Mono', monospace; font-size: 11px; padding: 8px 12px; margin-bottom: 14px; text-align: center; }
+    .scenarios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .scenario-card { background: transparent; border: 0.5px solid rgba(255,255,255,0.08); border-top: 2.5px solid; border-radius: 0; padding: 14px 16px; }
     .scenario-card.bull    { border-top-color: #4dba87; }
     .scenario-card.neutral { border-top-color: #6e9ef5; }
     .scenario-card.bear    { border-top-color: #e07070; }
     .scenario-card.tail    { border-top-color: #a97de8; }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 6px;
-    }
-    .card-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 17px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-    }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .card-title { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; letter-spacing: 0.01em; }
     .scenario-card.bull    .card-title { color: #4dba87; }
     .scenario-card.neutral .card-title { color: #6e9ef5; }
     .scenario-card.bear    .card-title { color: #e07070; }
     .scenario-card.tail    .card-title { color: #a97de8; }
-
-    .prob-badge {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 0;
-      white-space: nowrap;
-      letter-spacing: 0.04em;
-    }
+    .prob-badge { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 700; padding: 2px 7px; border-radius: 0; white-space: nowrap; letter-spacing: 0.04em; }
     .scenario-card.bull    .prob-badge { background: rgba(77,186,135,0.12);  color: #4dba87; }
     .scenario-card.neutral .prob-badge { background: rgba(110,158,245,0.12); color: #6e9ef5; }
     .scenario-card.bear    .prob-badge { background: rgba(220,100,100,0.12); color: #e07070; }
     .scenario-card.tail    .prob-badge { background: rgba(169,125,232,0.12); color: #a97de8; }
-
-    .card-trigger {
-      font-size: 12px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.78);
-      margin-bottom: 4px;
-      line-height: 1.4;
-    }
+    .card-trigger { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.78); margin-bottom: 4px; line-height: 1.4; }
     .card-trigger span { font-weight: 400; color: rgba(255,255,255,0.42); }
-
-    .card-desc {
-      font-size: 11.5px;
-      color: rgba(255,255,255,0.38);
-      line-height: 1.52;
-      margin-bottom: 11px;
-    }
-
-    .asset-row {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+    .card-desc { font-size: 11.5px; color: rgba(255,255,255,0.38); line-height: 1.52; margin-bottom: 11px; }
+    .asset-row { font-family: 'DM Mono', monospace; font-size: 11px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .asset-sep { color: rgba(255,255,255,0.18); }
     .asset-item { display: flex; gap: 4px; align-items: center; }
     .asset-label { font-weight: 700; }
@@ -187,82 +78,21 @@
     .scenario-card.neutral .asset-label, .scenario-card.neutral .asset-val { color: #6e9ef5; }
     .scenario-card.bear    .asset-label, .scenario-card.bear    .asset-val { color: #e07070; }
     .scenario-card.tail    .asset-label, .scenario-card.tail    .asset-val { color: #a97de8; }
-
-    /* ── Calendar strip ── */
-    .calendar-strip {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .cal-day {
-      background: rgba(255,255,255,0.02);
-      border: 0.5px solid rgba(255,255,255,0.07);
-      border-radius: 0;
-      padding: 10px 12px;
-      min-height: 68px;
-    }
-    .cal-day.has-event    { background: rgba(255,255,255,0.035); border-color: rgba(255,255,255,0.12); }
-    .cal-day.high-impact  { border-color: rgba(245,195,90,0.25); background: rgba(245,195,90,0.04); }
-    .cal-day.war-event    { border-color: rgba(220,80,80,0.35);  background: rgba(220,60,60,0.06); }
-
-    .cal-day-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      color: rgba(255,255,255,0.28);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-    }
+    .calendar-strip { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-bottom: 16px; }
+    .cal-day { background: rgba(255,255,255,0.02); border: 0.5px solid rgba(255,255,255,0.07); border-radius: 0; padding: 10px 12px; min-height: 68px; }
+    .cal-day.has-event   { background: rgba(255,255,255,0.035); border-color: rgba(255,255,255,0.12); }
+    .cal-day.high-impact { border-color: rgba(245,195,90,0.25); background: rgba(245,195,90,0.04); }
+    .cal-day.war-event   { border-color: rgba(220,80,80,0.35);  background: rgba(220,60,60,0.06); }
+    .cal-day-label { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.28); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 5px; }
     .cal-day.high-impact .cal-day-label { color: #f5c35a; }
     .cal-day.war-event   .cal-day-label { color: #e07070; }
-
-    .cal-event-name {
-      font-size: 11.5px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.72);
-      line-height: 1.3;
-      margin-bottom: 3px;
-    }
-    .cal-event-sub {
-      font-size: 10.5px;
-      color: rgba(255,255,255,0.32);
-      line-height: 1.35;
-    }
+    .cal-event-name { font-size: 11.5px; font-weight: 500; color: rgba(255,255,255,0.72); line-height: 1.3; margin-bottom: 3px; }
+    .cal-event-sub  { font-size: 10.5px; color: rgba(255,255,255,0.32); line-height: 1.35; }
     .cal-empty { color: rgba(255,255,255,0.16); font-size: 11px; margin-top: 3px; }
-
-    /* ── Drivers ── */
-    .drivers-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 0;
-    }
-    .drivers-block {
-      border: 0.5px solid rgba(255,255,255,0.07);
-      border-radius: 0;
-      padding: 13px 15px;
-    }
-    .drivers-title {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #ffffff;
-      font-weight: 700;
-      margin-bottom: 9px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .driver-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 7px;
-      margin-bottom: 6px;
-      font-size: 11.5px;
-      line-height: 1.45;
-    }
+    .drivers-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .drivers-block { border: 0.5px solid rgba(255,255,255,0.07); border-radius: 0; padding: 13px 15px; }
+    .drivers-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #ffffff; font-weight: 700; margin-bottom: 9px; display: flex; align-items: center; gap: 6px; }
+    .driver-item { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 6px; font-size: 11.5px; line-height: 1.45; }
     .driver-item:last-child { margin-bottom: 0; }
     .driver-arrow { font-size: 9px; margin-top: 2px; flex-shrink: 0; }
     .driver-arrow.up   { color: #4dba87; }
@@ -270,175 +100,371 @@
     .driver-label  { font-weight: 500; color: rgba(255,255,255,0.72); }
     .driver-detail { color: rgba(255,255,255,0.35); }
 
-    /* ── Footer ── */
-    .footer-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 28px 14px;
-    }
-    .footer-handle {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      color: rgba(255,255,255,0.18);
-      letter-spacing: 0.08em;
-    }
-    .footer-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      color: rgba(255,255,255,0.18);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
+    /* ── Market Data page ── */
+    .data-content { padding: 24px 28px 0; }
+    .data-page-header { margin-bottom: 24px; }
+    .data-page-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: #f0ede6; margin-bottom: 4px; }
+    .data-page-sub { font-size: 11px; color: rgba(255,255,255,0.28); font-family: 'DM Mono', monospace; letter-spacing: 0.06em; }
 
-    /* ── Error banner ── */
-    .error-banner {
-      display: none;
-      background: rgba(220,80,80,0.1);
-      border: 0.5px solid rgba(220,80,80,0.3);
-      color: #e07070;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      padding: 8px 12px;
-      margin-bottom: 14px;
-      text-align: center;
-    }
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .charts-grid.single { grid-template-columns: 1fr; }
+
+    .chart-card { border: 0.5px solid rgba(255,255,255,0.08); border-radius: 0; padding: 18px 18px 14px; background: rgba(255,255,255,0.01); }
+    .chart-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+    .chart-card-title { font-size: 14px; font-weight: 500; color: #f0ede6; margin-bottom: 3px; }
+    .chart-card-sub { font-family: 'DM Mono', monospace; font-size: 9.5px; color: rgba(255,255,255,0.25); letter-spacing: 0.06em; }
+
+    .chart-tabs { display: flex; gap: 0; }
+    .ctab { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.06em; padding: 3px 9px; border: 0.5px solid rgba(255,255,255,0.1); border-right: none; background: transparent; color: rgba(255,255,255,0.28); cursor: pointer; transition: all 0.15s; outline: none; }
+    .ctab:last-child { border-right: 0.5px solid rgba(255,255,255,0.1); }
+    .ctab:hover { color: rgba(255,255,255,0.6); }
+    .ctab.active { color: #4dba87; border-color: #4dba87; background: rgba(77,186,135,0.06); }
+
+    .chart-stats { display: flex; gap: 0; margin-bottom: 14px; }
+    .cstat { flex: 1; padding: 8px 12px; border: 0.5px solid rgba(255,255,255,0.06); border-right: none; }
+    .cstat:last-child { border-right: 0.5px solid rgba(255,255,255,0.06); }
+    .cstat-label { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+    .cstat-val { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5); }
+    .cstat-val.teal   { color: #4dba87; }
+    .cstat-val.blue   { color: #6e9ef5; }
+    .cstat-val.gold   { color: #f5c35a; }
+    .cstat-val.orange { color: #f0a040; }
+    .cstat-val.red    { color: #e07070; }
+
+    .chart-area { position: relative; width: 100%; height: 200px; }
+    .chart-area.tall { height: 240px; }
+
+    .chart-legend { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+    .leg { display: flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 9.5px; color: rgba(255,255,255,0.3); }
+    .leg-line { width: 14px; height: 2px; display: inline-block; }
+    .leg-dot  { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+    .teal-bg   { background: #4dba87; }
+    .blue-bg   { background: #6e9ef5; }
+    .gold-bg   { background: #f5c35a; }
+    .orange-bg { background: #f0a040; }
+    .red-bg    { background: #e07070; }
+
+    /* ── Footer ── */
+    .footer-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 28px 14px; margin-top: 16px; }
+    .footer-handle { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.18); letter-spacing: 0.08em; }
+    .footer-tag    { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.18); letter-spacing: 0.08em; text-transform: uppercase; }
   </style>
 </head>
 <body>
-
   <div class="rainbow-bar"></div>
 
-  <div class="top-nav">
-    <div class="nav-pill">Scenarios + Calendar + Drivers · 1/1</div>
-    <div class="week-range" id="week-label"></div>
+  <nav class="site-nav">
+    <div class="site-nav-left">
+      <div class="site-logo">Ceruleus Capital</div>
+    </div>
+    <div class="site-nav-right">
+      <div class="nav-items">
+        <div class="nav-dropdown" id="dd-news">
+          <button class="nav-dropdown-btn active" onclick="toggleDropdown('dd-news')">
+            News Feed <span class="chevron">▼</span>
+          </button>
+          <div class="nav-dropdown-menu">
+            <button class="nav-dropdown-item active" onclick="switchPage('news'); closeDropdowns()">Morning Brief</button>
+          </div>
+        </div>
+        <div class="nav-dropdown" id="dd-data">
+          <button class="nav-dropdown-btn" onclick="switchPage('data'); closeDropdowns()">
+            Market Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- NEWS & EVENTS -->
+  <div class="page active" id="page-news">
+    <div class="dashboard-nav">
+      <div class="nav-pill">Scenarios + Calendar + Drivers · 1/1</div>
+      <div class="week-range" id="week-label"></div>
+    </div>
+    <div class="main-content">
+      <div class="headline" id="headline">
+        Two Catalysts. <span class="accent-gold">FOMC Minutes</span> Wednesday.<br>
+        <span class="accent-teal">CPI Friday</span> Defines The Trend.
+      </div>
+      <div class="subhead" id="subhead">
+        FOMC Minutes on Wednesday (Apr 8, 2:00 PM ET) reveal March deliberations — hawkish/dovish tilt sets the stage.
+        CPI on Friday (Apr 10, 8:30 AM ET) is the inflation print that either validates or kills the rate-cut narrative.
+        Iran deadline adds a tail risk layer across all scenarios.
+      </div>
+      <button class="gen-btn" id="gen-btn" onclick="generateScenarios()">Regenerate Scenarios</button>
+      <div class="error-banner" id="error-banner"></div>
+      <div class="loading-msg" id="loading-msg">Generating scenarios...</div>
+      <div class="scenarios-grid" id="scenarios-grid">
+        <div class="scenario-card bull">
+          <div class="card-header"><div class="card-title">Dovish Minutes + Cool CPI</div><div class="prob-badge">30%</div></div>
+          <div class="card-trigger">Minutes reveal rate-cut discussion. <span>CPI prints ≤2.8% YoY. Goldilocks.</span></div>
+          <div class="card-desc">Fed signals patience but not panic. Disinflation back on track. Risk-on across the board — equities rally, BTC breaks higher. Short-covering + momentum buyers pile in.</div>
+          <div class="asset-row">
+            <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;5,700–5,900</span></div>
+            <span class="asset-sep">·</span>
+            <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;$85–95K</span></div>
+            <span class="asset-sep">·</span>
+            <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;$95–105</span></div>
+          </div>
+        </div>
+        <div class="scenario-card neutral">
+          <div class="card-header"><div class="card-title">Stalemate + Data Driven</div><div class="prob-badge">40%</div></div>
+          <div class="card-trigger">"Talks ongoing" but no deal. <span>CPI in-line at 3.0–3.2%. Grind.</span></div>
+          <div class="card-desc">FOMC offers no new information. CPI neither hot nor cold. Market stays in wait-and-see. Range-bound chop. Iran deadline extends again.</div>
+          <div class="asset-row">
+            <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;5,400–5,650</span></div>
+            <span class="asset-sep">·</span>
+            <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;$73–82K</span></div>
+            <span class="asset-sep">·</span>
+            <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;$105–115</span></div>
+          </div>
+        </div>
+        <div class="scenario-card bear">
+          <div class="card-header"><div class="card-title">Data Shock</div><div class="prob-badge">20%</div></div>
+          <div class="card-trigger">Hawkish minutes + CPI re-accelerates above 3.3%. <span>Stagflation fear returns.</span></div>
+          <div class="card-desc">Fed trapped — can't cut with inflation sticky. Treasury yields spike. Risk-off. Equities test lows. DXY strengthens. BTC correlates down.</div>
+          <div class="asset-row">
+            <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;5,100–5,350</span></div>
+            <span class="asset-sep">·</span>
+            <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;$60–72K</span></div>
+            <span class="asset-sep">·</span>
+            <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;$115+</span></div>
+          </div>
+        </div>
+        <div class="scenario-card tail">
+          <div class="card-header"><div class="card-title">Escalation / Iran Strikes</div><div class="prob-badge">10%</div></div>
+          <div class="card-trigger">Trump executes infrastructure strikes. <span>Iran closes Strait fully.</span></div>
+          <div class="card-desc">Oil spikes to $130–145. S&amp;P gaps down 4–5%. CPI and FOMC become irrelevant. Vol explosion. Gold outperforms. BTC flush then potential safe-haven bid.</div>
+          <div class="asset-row">
+            <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;5,000–5,200</span></div>
+            <span class="asset-sep">·</span>
+            <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;$55–65K</span></div>
+            <span class="asset-sep">·</span>
+            <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;$130–145</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="calendar-strip">
+        <div class="cal-day war-event">
+          <div class="cal-day-label">Tue 4/7 🚨</div>
+          <div class="cal-event-name">Iran Deadline</div>
+          <div class="cal-event-sub">8PM ET. Hormuz ultimatum. Pattern is extension. Primary tail risk.</div>
+        </div>
+        <div class="cal-day high-impact">
+          <div class="cal-day-label">Wed 4/8 ★</div>
+          <div class="cal-event-name">FOMC Minutes</div>
+          <div class="cal-event-sub">2:00 PM ET. Mar deliberations. Tone = primary signal this week.</div>
+        </div>
+        <div class="cal-day has-event">
+          <div class="cal-day-label">Thu 4/9</div>
+          <div class="cal-event-name">Jobless Claims</div>
+          <div class="cal-event-sub">8:30 AM ET. Pre-CPI positioning. Last signal before Friday.</div>
+        </div>
+        <div class="cal-day high-impact">
+          <div class="cal-day-label">Fri 4/10 ⚡</div>
+          <div class="cal-event-name">CPI (Mar)</div>
+          <div class="cal-event-sub">8:30 AM ET. Highest-impact print. Core ex-energy most watched.</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label">Ongoing</div>
+          <div class="cal-event-name">Hormuz Flow</div>
+          <div class="cal-event-sub">8 tankers/day vs 20M bbl prewar. Watch for resumption signal.</div>
+        </div>
+      </div>
+      <div class="drivers-row">
+        <div class="drivers-block" id="equity-drivers">
+          <div class="drivers-title">▦ &nbsp;Equity Drivers</div>
+          <div class="driver-item"><span class="driver-arrow up">▲</span><div><span class="driver-label">"Iran deal materializes"</span><span class="driver-detail"> → oil drops $15–25 → short covering rally. Biggest upside — nobody positioned.</span></div></div>
+          <div class="driver-item"><span class="driver-arrow up">▲</span><div><span class="driver-label">Dovish minutes + cool CPI</span><span class="driver-detail"> → rate-cut timeline pulled forward → multiple expansion → gap up potential.</span></div></div>
+          <div class="driver-item"><span class="driver-arrow down">▼</span><div><span class="driver-label">Dow/Nasdaq in correction.</span><span class="driver-detail"> S&amp;P -8.7% from peak. Earnings estimates not yet revised down. Risk mispriced.</span></div></div>
+          <div class="driver-item"><span class="driver-arrow down">▼</span><div><span class="driver-label">Hot CPI + hawkish tone</span><span class="driver-detail"> = stagflation narrative. Fed paralyzed. Yields spike. Equities reprice lower.</span></div></div>
+        </div>
+        <div class="drivers-block" id="btc-drivers">
+          <div class="drivers-title">₿ &nbsp;Bitcoin Drivers</div>
+          <div class="driver-item"><span class="driver-arrow up">▲</span><div><span class="driver-label">Bad NFP = bullish paradox.</span><span class="driver-detail"> Job losses → Fed forced to cut → liquidity → BTC runs. F&amp;G at 15 = contrarian signal.</span></div></div>
+          <div class="driver-item"><span class="driver-arrow up">▲</span><div><span class="driver-label">Ceasefire = explosive.</span><span class="driver-detail"> Oil drops → risk-on → BTC breaks $85K. Institutional rotation follows.</span></div></div>
+          <div class="driver-item"><span class="driver-arrow down">▼</span><div><span class="driver-label">$73K testing lower range.</span><span class="driver-detail"> Rising floor under pressure. DXY above 100. Watch for breakdown vs. hold.</span></div></div>
+          <div class="driver-item"><span class="driver-arrow down">▼</span><div><span class="driver-label">Hot CPI = higher-for-longer.</span><span class="driver-detail"> No liquidity catalyst. BTC correlates with risk-off. Iran escalation = initial flush.</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <div class="footer-handle">@ceruleus_capital</div>
+      <div class="footer-tag">Scenarios + Calendar · Ceruleus Capital</div>
+    </div>
   </div>
 
-  <div class="main-content">
+  <!-- MARKET DATA — single page, all charts -->
+  <div class="page" id="page-data">
+    <div class="data-content">
 
-    <div class="headline" id="headline">
-      Two Catalysts. <span class="accent-gold">FOMC Minutes</span> Wednesday.<br>
-      <span class="accent-teal">CPI Friday</span> Defines The Trend.
-    </div>
-    <div class="subhead" id="subhead">
-      FOMC Minutes on Wednesday (Apr 8, 2:00 PM ET) reveal March deliberations — hawkish/dovish tilt sets the stage.
-      CPI on Friday (Apr 10, 8:30 AM ET) is the inflation print that either validates or kills the rate-cut narrative.
-      Iran deadline tonight adds a tail risk layer across all scenarios.
-    </div>
+      <div class="data-page-header">
+        <div class="data-page-title">Market Data</div>
+        <div class="data-page-sub">BTC market structure · Updated with live data</div>
+      </div>
 
-    <button class="gen-btn" id="gen-btn" onclick="generateScenarios()">Regenerate Scenarios</button>
-    <div class="error-banner" id="error-banner"></div>
-    <div class="loading-msg" id="loading-msg">Generating scenarios...</div>
+      <!-- Row 1 -->
+      <div class="charts-grid">
 
-    <div class="scenarios-grid" id="scenarios-grid">
-      <div class="scenario-card bull">
-        <div class="card-header"><div class="card-title">Dovish Minutes + Cool CPI</div><div class="prob-badge">30%</div></div>
-        <div class="card-trigger">Minutes reveal rate-cut discussion. <span>CPI prints ≤2.8% YoY. Goldilocks.</span></div>
-        <div class="card-desc">Fed signals patience but not panic. Disinflation back on track. Risk-on across the board — equities rally, BTC breaks higher. Short-covering + momentum buyers pile in.</div>
-        <div class="asset-row">
-          <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;5,700–5,900</span></div>
-          <span class="asset-sep">·</span>
-          <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;$85–95K</span></div>
-          <span class="asset-sep">·</span>
-          <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;$95–105</span></div>
+        <div class="chart-card" id="chart-basis">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Quarterly Basis</div>
+              <div class="chart-card-sub">Annualized futures premium vs. spot · Deribit</div>
+            </div>
+            <div class="chart-tabs" id="tabs-basis">
+              <button class="ctab active" onclick="setTab('basis','1M',this)">1M</button>
+              <button class="ctab" onclick="setTab('basis','3M',this)">3M</button>
+              <button class="ctab" onclick="setTab('basis','6M',this)">6M</button>
+              <button class="ctab" onclick="setTab('basis','1Y',this)">1Y</button>
+            </div>
+          </div>
+          <div class="chart-stats" id="stats-basis">
+            <div class="cstat"><div class="cstat-label">Jun 2026</div><div class="cstat-val teal" id="b-jun">—</div></div>
+            <div class="cstat"><div class="cstat-label">Sep 2026</div><div class="cstat-val blue" id="b-sep">—</div></div>
+            <div class="cstat"><div class="cstat-label">Dec 2026</div><div class="cstat-val gold" id="b-dec">—</div></div>
+            <div class="cstat"><div class="cstat-label">Signal</div><div class="cstat-val" id="b-sig">—</div></div>
+          </div>
+          <div class="chart-area"><canvas id="canvas-basis"></canvas></div>
+          <div class="chart-legend">
+            <span class="leg"><span class="leg-line teal-bg"></span>Jun 2026</span>
+            <span class="leg"><span class="leg-line blue-bg"></span>Sep 2026</span>
+            <span class="leg"><span class="leg-line gold-bg"></span>Dec 2026</span>
+          </div>
         </div>
-      </div>
-      <div class="scenario-card neutral">
-        <div class="card-header"><div class="card-title">Stalemate + Data Driven</div><div class="prob-badge">40%</div></div>
-        <div class="card-trigger">"Talks ongoing" but no deal. <span>CPI in-line at 3.0–3.2%. Grind.</span></div>
-        <div class="card-desc">FOMC offers no new information. CPI neither hot nor cold. Market stays in wait-and-see. Range-bound chop. Iran deadline extends again — same playbook as March 21.</div>
-        <div class="asset-row">
-          <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;5,400–5,650</span></div>
-          <span class="asset-sep">·</span>
-          <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;$73–82K</span></div>
-          <span class="asset-sep">·</span>
-          <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;$105–115</span></div>
-        </div>
-      </div>
-      <div class="scenario-card bear">
-        <div class="card-header"><div class="card-title">Data Shock</div><div class="prob-badge">20%</div></div>
-        <div class="card-trigger">Hawkish minutes + CPI re-accelerates above 3.3%. <span>Stagflation fear returns.</span></div>
-        <div class="card-desc">Fed trapped — can't cut with inflation sticky. Treasury yields spike. Risk-off. Equities test lows. DXY strengthens. BTC correlates down. Iran escalation amplifies.</div>
-        <div class="asset-row">
-          <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;5,100–5,350</span></div>
-          <span class="asset-sep">·</span>
-          <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;$60–72K</span></div>
-          <span class="asset-sep">·</span>
-          <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;$115+</span></div>
-        </div>
-      </div>
-      <div class="scenario-card tail">
-        <div class="card-header"><div class="card-title">Escalation / Iran Strikes</div><div class="prob-badge">10%</div></div>
-        <div class="card-trigger">Trump executes infrastructure strikes. <span>Iran closes Strait fully.</span></div>
-        <div class="card-desc">Oil spikes to $130–145. S&amp;P gaps down 4–5%. CPI and FOMC become irrelevant. Vol explosion. Gold outperforms. BTC flush then potential safe-haven bid later.</div>
-        <div class="asset-row">
-          <div class="asset-item"><span class="asset-label">S&amp;P</span><span class="asset-val">&nbsp;5,000–5,200</span></div>
-          <span class="asset-sep">·</span>
-          <div class="asset-item"><span class="asset-label">BTC</span><span class="asset-val">&nbsp;$55–65K</span></div>
-          <span class="asset-sep">·</span>
-          <div class="asset-item"><span class="asset-label">Oil</span><span class="asset-val">&nbsp;$130–145</span></div>
-        </div>
-      </div>
-    </div>
 
-    <div class="calendar-strip" id="calendar-strip">
-      <div class="cal-day war-event">
-        <div class="cal-day-label">Tue 4/7 🚨</div>
-        <div class="cal-event-name">Iran Deadline</div>
-        <div class="cal-event-sub">8PM ET. Hormuz ultimatum. Pattern is extension. Primary tail risk.</div>
-      </div>
-      <div class="cal-day high-impact">
-        <div class="cal-day-label">Wed 4/8 ★</div>
-        <div class="cal-event-name">FOMC Minutes</div>
-        <div class="cal-event-sub">2:00 PM ET. Mar deliberations. Tone = primary signal this week.</div>
-      </div>
-      <div class="cal-day has-event">
-        <div class="cal-day-label">Thu 4/9</div>
-        <div class="cal-event-name">Jobless Claims</div>
-        <div class="cal-event-sub">8:30 AM ET. Pre-CPI positioning. Last signal before Friday.</div>
-      </div>
-      <div class="cal-day high-impact">
-        <div class="cal-day-label">Fri 4/10 ⚡</div>
-        <div class="cal-event-name">CPI (Mar)</div>
-        <div class="cal-event-sub">8:30 AM ET. Highest-impact print. Core ex-energy most watched.</div>
-      </div>
-      <div class="cal-day">
-        <div class="cal-day-label">Ongoing</div>
-        <div class="cal-event-name">Hormuz Flow</div>
-        <div class="cal-event-sub">8 tankers/day vs 20M bbl prewar. Watch for resumption signal.</div>
-      </div>
-    </div>
+        <div class="chart-card" id="chart-spread">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Market Spread</div>
+              <div class="chart-card-sub">Effective spread by order size · Binance spot</div>
+            </div>
+            <div class="chart-tabs">
+              <button class="ctab active" onclick="setTab('spread','1D',this)">1D</button>
+              <button class="ctab" onclick="setTab('spread','1W',this)">1W</button>
+              <button class="ctab" onclick="setTab('spread','1M',this)">1M</button>
+            </div>
+          </div>
+          <div class="chart-stats">
+            <div class="cstat"><div class="cstat-label">$1K Order</div><div class="cstat-val teal" id="s-1k">—</div></div>
+            <div class="cstat"><div class="cstat-label">$25K Order</div><div class="cstat-val blue" id="s-25k">—</div></div>
+            <div class="cstat"><div class="cstat-label">$100K Order</div><div class="cstat-val gold" id="s-100k">—</div></div>
+            <div class="cstat"><div class="cstat-label">Liquidity</div><div class="cstat-val teal" id="s-liq">—</div></div>
+          </div>
+          <div class="chart-area"><canvas id="canvas-spread"></canvas></div>
+          <div class="chart-legend">
+            <span class="leg"><span class="leg-line teal-bg"></span>$1K</span>
+            <span class="leg"><span class="leg-line blue-bg"></span>$25K</span>
+            <span class="leg"><span class="leg-line gold-bg"></span>$100K</span>
+          </div>
+        </div>
 
-    <div class="drivers-row">
-      <div class="drivers-block" id="equity-drivers">
-        <div class="drivers-title">▦ &nbsp;Equity Drivers</div>
-        <div class="driver-item"><span class="driver-arrow up">▲</span><div><span class="driver-label">"Iran deal materializes"</span><span class="driver-detail"> → oil drops $15–25 → short covering rally. Biggest upside — nobody positioned.</span></div></div>
-        <div class="driver-item"><span class="driver-arrow up">▲</span><div><span class="driver-label">Dovish minutes + cool CPI</span><span class="driver-detail"> → rate-cut timeline pulled forward → multiple expansion → gap up potential.</span></div></div>
-        <div class="driver-item"><span class="driver-arrow down">▼</span><div><span class="driver-label">Dow/Nasdaq in correction.</span><span class="driver-detail"> S&amp;P -8.7% from peak. Earnings estimates not yet revised down. Risk mispriced.</span></div></div>
-        <div class="driver-item"><span class="driver-arrow down">▼</span><div><span class="driver-label">Hot CPI + hawkish tone</span><span class="driver-detail"> = stagflation narrative. Fed paralyzed. Yields spike. Equities reprice lower.</span></div></div>
       </div>
-      <div class="drivers-block" id="btc-drivers">
-        <div class="drivers-title">₿ &nbsp;Bitcoin Drivers</div>
-        <div class="driver-item"><span class="driver-arrow up">▲</span><div><span class="driver-label">Bad NFP = bullish paradox.</span><span class="driver-detail"> Job losses → Fed forced to cut → liquidity → BTC runs. F&amp;G at 15 = contrarian signal.</span></div></div>
-        <div class="driver-item"><span class="driver-arrow up">▲</span><div><span class="driver-label">Ceasefire = explosive.</span><span class="driver-detail"> Oil drops → risk-on → BTC breaks $85K. Institutional rotation follows.</span></div></div>
-        <div class="driver-item"><span class="driver-arrow down">▼</span><div><span class="driver-label">$73K testing lower range.</span><span class="driver-detail"> Rising floor under pressure. DXY above 100. Watch for breakdown vs. hold.</span></div></div>
-        <div class="driver-item"><span class="driver-arrow down">▼</span><div><span class="driver-label">Hot CPI = higher-for-longer.</span><span class="driver-detail"> No liquidity catalyst. BTC correlates with risk-off. Iran escalation = initial flush.</span></div></div>
-      </div>
-    </div>
 
+      <!-- Row 2 -->
+      <div class="charts-grid">
+
+        <div class="chart-card" id="chart-volume">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Volume by Contract</div>
+              <div class="chart-card-sub">BTC spot vs. perp vs. quarterly · Binance</div>
+            </div>
+            <div class="chart-tabs">
+              <button class="ctab active" onclick="setTab('volume','1M',this)">1M</button>
+              <button class="ctab" onclick="setTab('volume','3M',this)">3M</button>
+              <button class="ctab" onclick="setTab('volume','6M',this)">6M</button>
+            </div>
+          </div>
+          <div class="chart-stats">
+            <div class="cstat"><div class="cstat-label">Spot</div><div class="cstat-val teal" id="v-spot">—</div></div>
+            <div class="cstat"><div class="cstat-label">Perp</div><div class="cstat-val blue" id="v-perp">—</div></div>
+            <div class="cstat"><div class="cstat-label">Quarterly</div><div class="cstat-val gold" id="v-qtr">—</div></div>
+            <div class="cstat"><div class="cstat-label">Cumulative</div><div class="cstat-val orange" id="v-cum">—</div></div>
+          </div>
+          <div class="chart-area"><canvas id="canvas-volume"></canvas></div>
+          <div class="chart-legend">
+            <span class="leg"><span class="leg-line teal-bg"></span>Spot</span>
+            <span class="leg"><span class="leg-line blue-bg"></span>Perp</span>
+            <span class="leg"><span class="leg-line gold-bg"></span>Quarterly</span>
+            <span class="leg"><span class="leg-line orange-bg"></span>Cumulative</span>
+          </div>
+        </div>
+
+        <div class="chart-card" id="chart-outliers">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Volume Outliers</div>
+              <div class="chart-card-sub">Sessions &gt;2σ from 30D rolling avg · Binance</div>
+            </div>
+            <div class="chart-tabs">
+              <button class="ctab active" onclick="setTab('outliers','3M',this)">3M</button>
+              <button class="ctab" onclick="setTab('outliers','6M',this)">6M</button>
+              <button class="ctab" onclick="setTab('outliers','1Y',this)">1Y</button>
+            </div>
+          </div>
+          <div class="chart-stats">
+            <div class="cstat"><div class="cstat-label">Outliers (period)</div><div class="cstat-val gold" id="o-count">—</div></div>
+            <div class="cstat"><div class="cstat-label">Last outlier</div><div class="cstat-val teal" id="o-last">—</div></div>
+            <div class="cstat"><div class="cstat-label">Avg excess</div><div class="cstat-val blue" id="o-avg">—</div></div>
+            <div class="cstat"><div class="cstat-label">Signal</div><div class="cstat-val" id="o-sig">—</div></div>
+          </div>
+          <div class="chart-area"><canvas id="canvas-outliers"></canvas></div>
+          <div class="chart-legend">
+            <span class="leg"><span class="leg-line teal-bg"></span>Volume</span>
+            <span class="leg"><span class="leg-dot orange-bg"></span>Outlier</span>
+            <span class="leg"><span class="leg-line orange-bg" style="opacity:0.5"></span>Cumulative</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Row 3 — full width -->
+      <div class="charts-grid single">
+
+        <div class="chart-card" id="chart-region">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Volume by Region</div>
+              <div class="chart-card-sub">BTC volume by geographic session — Asia · US · EU</div>
+            </div>
+            <div class="chart-tabs">
+              <button class="ctab active" onclick="setTab('region','1M',this)">1M</button>
+              <button class="ctab" onclick="setTab('region','3M',this)">3M</button>
+              <button class="ctab" onclick="setTab('region','6M',this)">6M</button>
+              <button class="ctab" onclick="setTab('region','1Y',this)">1Y</button>
+            </div>
+          </div>
+          <div class="chart-stats">
+            <div class="cstat"><div class="cstat-label">Asia (Binance/OKX)</div><div class="cstat-val teal" id="r-asia">—</div></div>
+            <div class="cstat"><div class="cstat-label">US (Coinbase)</div><div class="cstat-val blue" id="r-us">—</div></div>
+            <div class="cstat"><div class="cstat-label">EU (Kraken)</div><div class="cstat-val gold" id="r-eu">—</div></div>
+            <div class="cstat"><div class="cstat-label">Dominant session</div><div class="cstat-val teal" id="r-dom">—</div></div>
+            <div class="cstat"><div class="cstat-label">Cumulative</div><div class="cstat-val orange" id="r-cum">—</div></div>
+          </div>
+          <div class="chart-area tall"><canvas id="canvas-region"></canvas></div>
+          <div class="chart-legend">
+            <span class="leg"><span class="leg-line teal-bg"></span>Asia</span>
+            <span class="leg"><span class="leg-line blue-bg"></span>US</span>
+            <span class="leg"><span class="leg-line gold-bg"></span>EU</span>
+            <span class="leg"><span class="leg-line orange-bg"></span>Cumulative</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+    <div class="footer-bar">
+      <div class="footer-handle">@ceruleus_capital</div>
+      <div class="footer-tag">Market Data · Ceruleus Capital</div>
+    </div>
   </div>
 
-  <div class="footer-bar">
-    <div class="footer-handle">@ceruleus_capital</div>
-    <div class="footer-tag" id="footer-tag">Scenarios + Calendar · Ceruleus Capital</div>
-  </div>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <script>
-    // ── Config ──────────────────────────────────────────────────
-    // Replace this URL after deploying your Cloudflare Worker
     const WORKER_URL = 'https://ceruleus-api.reidjohal.workers.dev';
 
-    // ── Trading week (Mon–Fri), locked on load ───────────────────
     function getTradingWeek() {
       const now = new Date();
       const day = now.getDay();
@@ -450,18 +476,298 @@
       const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       return `Week of ${months[mon.getMonth()]} ${mon.getDate()} – ${months[fri.getMonth()]} ${fri.getDate()}, ${fri.getFullYear()}`;
     }
-
     const TRADING_WEEK = getTradingWeek();
     document.getElementById('week-label').textContent = TRADING_WEEK;
 
-    // ── Render helpers ───────────────────────────────────────────
+    function toggleDropdown(id) {
+      const dd = document.getElementById(id);
+      const isOpen = dd.classList.contains('open');
+      closeDropdowns();
+      if (!isOpen) dd.classList.add('open');
+    }
+    function closeDropdowns() {
+      document.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('open'));
+    }
+    document.addEventListener('click', e => { if (!e.target.closest('.nav-dropdown')) closeDropdowns(); });
+
+    let chartsInitialised = false;
+    function switchPage(pageKey) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById('page-' + pageKey);
+      if (target) target.classList.add('active');
+      document.querySelectorAll('.nav-dropdown-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.nav-dropdown-item').forEach(i => i.classList.remove('active'));
+      if (pageKey === 'news') {
+        document.querySelector('#dd-news .nav-dropdown-btn').classList.add('active');
+        document.querySelector('#dd-news .nav-dropdown-item').classList.add('active');
+      } else {
+        document.querySelector('#dd-data .nav-dropdown-btn').classList.add('active');
+        if (!chartsInitialised) { initAllCharts(); chartsInitialised = true; }
+      }
+      document.getElementById('week-label').textContent = TRADING_WEEK;
+    }
+
+    // ── Chart helpers ────────────────────────────────────────────
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    function chartDefaults() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#13151c',
+            borderColor: 'rgba(255,255,255,0.1)',
+            borderWidth: 0.5,
+            titleColor: 'rgba(255,255,255,0.35)',
+            bodyColor: '#e8e6e0',
+            titleFont: { family: 'DM Mono, monospace', size: 9 },
+            bodyFont: { family: 'DM Mono, monospace', size: 10 },
+            padding: 10,
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
+            ticks: { color: 'rgba(255,255,255,0.22)', font: { family: 'DM Mono, monospace', size: 9 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 },
+            border: { display: false }
+          },
+          y: {
+            position: 'right',
+            grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
+            ticks: { color: 'rgba(255,255,255,0.22)', font: { family: 'DM Mono, monospace', size: 9 } },
+            border: { display: false }
+          }
+        }
+      };
+    }
+
+    function genLabels(n, unit) {
+      const labels = [], now = new Date();
+      for (let i = n-1; i >= 0; i--) {
+        const d = new Date(now);
+        if (unit === 'day')  d.setDate(d.getDate() - i);
+        if (unit === 'week') d.setDate(d.getDate() - i * 7);
+        if (unit === 'hour') d.setHours(d.getHours() - i * 4);
+        labels.push(`${MONTHS[d.getMonth()]} ${d.getDate()}`);
+      }
+      return labels;
+    }
+
+    function genLine(n, base, noise, trend) {
+      const out = []; let v = base;
+      for (let i = 0; i < n; i++) {
+        v += (Math.random() - 0.48) * noise + trend;
+        v = Math.max(base * 0.3, Math.min(base * 2.8, v));
+        out.push(parseFloat(v.toFixed(2)));
+      }
+      return out;
+    }
+
+    function genBars(n, base, noise) {
+      return Array.from({length: n}, () => parseFloat((base + (Math.random()-0.4)*noise).toFixed(2)));
+    }
+
+    function cumulative(arr) {
+      let sum = 0;
+      return arr.map(v => parseFloat((sum += v).toFixed(2)));
+    }
+
+    function makeChart(id, config) {
+      const ctx = document.getElementById(id);
+      if (!ctx) return null;
+      return new Chart(ctx, config);
+    }
+
+    // ── Chart registry ───────────────────────────────────────────
+    const charts = {};
+
+    // ── 1. Quarterly Basis ───────────────────────────────────────
+    function buildBasis(range) {
+      const n = {  '1M': 30, '3M': 90, '6M': 180, '1Y': 365 }[range] || 30;
+      const unit = n <= 30 ? 'day' : 'week';
+      const labels = genLabels(Math.min(n, 52), unit);
+      const pts = labels.length;
+      const jun = genLine(pts, 8.5,  1.2, -0.03);
+      const sep = genLine(pts, 11.5, 1.0, -0.02);
+      const dec = genLine(pts, 14.0, 0.9, -0.015);
+      document.getElementById('b-jun').textContent = `+${jun[pts-1].toFixed(1)}%`;
+      document.getElementById('b-sep').textContent = `+${sep[pts-1].toFixed(1)}%`;
+      document.getElementById('b-dec').textContent = `+${dec[pts-1].toFixed(1)}%`;
+      const sig = sep[pts-1];
+      const sigEl = document.getElementById('b-sig');
+      sigEl.textContent = sig > 14 ? 'Bullish' : sig < 6 ? 'Bearish' : 'Neutral';
+      sigEl.className = 'cstat-val ' + (sig > 14 ? 'teal' : sig < 6 ? 'red' : 'blue');
+      if (charts.basis) charts.basis.destroy();
+      const cfg = chartDefaults();
+      cfg.scales.y.ticks.callback = v => v.toFixed(0) + '%';
+      charts.basis = makeChart('canvas-basis', {
+        type: 'line', data: { labels,
+          datasets: [
+            { label: 'Jun 2026', data: jun, borderColor: '#4dba87', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
+            { label: 'Sep 2026', data: sep, borderColor: '#6e9ef5', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
+            { label: 'Dec 2026', data: dec, borderColor: '#f5c35a', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
+          ]
+        }, options: cfg
+      });
+    }
+
+    // ── 2. Spread ────────────────────────────────────────────────
+    function buildSpread(range) {
+      const n = { '1D': 48, '1W': 42, '1M': 30 }[range] || 48;
+      const unit = range === '1D' ? 'hour' : 'day';
+      const labels = genLabels(n, unit);
+      const s1   = genLine(n, 1.2,  0.2,  0);
+      const s25  = genLine(n, 4.8,  0.5,  0);
+      const s100 = genLine(n, 14.3, 1.4,  0);
+      document.getElementById('s-1k').textContent   = s1[n-1].toFixed(1)   + ' bps';
+      document.getElementById('s-25k').textContent  = s25[n-1].toFixed(1)  + ' bps';
+      document.getElementById('s-100k').textContent = s100[n-1].toFixed(1) + ' bps';
+      const liq = s25[n-1] < 4 ? 'Excellent' : s25[n-1] < 6 ? 'Good' : s25[n-1] < 9 ? 'Fair' : 'Poor';
+      const liqEl = document.getElementById('s-liq');
+      liqEl.textContent = liq;
+      liqEl.className = 'cstat-val ' + (liq === 'Excellent' || liq === 'Good' ? 'teal' : liq === 'Fair' ? 'gold' : 'red');
+      if (charts.spread) charts.spread.destroy();
+      const cfg = chartDefaults();
+      cfg.scales.y.ticks.callback = v => v.toFixed(0) + ' bps';
+      charts.spread = makeChart('canvas-spread', {
+        type: 'line', data: { labels,
+          datasets: [
+            { label: '$1K',   data: s1,   borderColor: '#4dba87', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
+            { label: '$25K',  data: s25,  borderColor: '#6e9ef5', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
+            { label: '$100K', data: s100, borderColor: '#f5c35a', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false },
+          ]
+        }, options: cfg
+      });
+    }
+
+    // ── 3. Volume by Contract ────────────────────────────────────
+    function buildVolume(range) {
+      const n = { '1M': 30, '3M': 90, '6M': 180 }[range] || 30;
+      const unit = n <= 30 ? 'day' : 'week';
+      const labels = genLabels(Math.min(n, 52), unit);
+      const pts = labels.length;
+      const spot = genBars(pts, 8,  3);
+      const perp = genBars(pts, 14, 4);
+      const qtr  = genBars(pts, 3,  1.2);
+      const total = spot.map((v,i) => v + perp[i] + qtr[i]);
+      const cum = cumulative(total);
+      document.getElementById('v-spot').textContent = spot[pts-1].toFixed(1) + 'B';
+      document.getElementById('v-perp').textContent = perp[pts-1].toFixed(1) + 'B';
+      document.getElementById('v-qtr').textContent  = qtr[pts-1].toFixed(1)  + 'B';
+      document.getElementById('v-cum').textContent  = (cum[pts-1]/1000).toFixed(2) + 'T';
+      if (charts.volume) charts.volume.destroy();
+      const cfg = chartDefaults();
+      cfg.scales.y.ticks.callback = v => v.toFixed(0) + 'B';
+      cfg.scales.y2 = { position: 'left', grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.15)', font: { family: 'DM Mono, monospace', size: 9 }, callback: v => (v/1000).toFixed(1)+'T' }, border: { display: false } };
+      charts.volume = makeChart('canvas-volume', {
+        type: 'bar', data: { labels,
+          datasets: [
+            { label: 'Spot',      data: spot, backgroundColor: 'rgba(77,186,135,0.55)',  stack: 'vol' },
+            { label: 'Perp',      data: perp, backgroundColor: 'rgba(110,158,245,0.55)', stack: 'vol' },
+            { label: 'Quarterly', data: qtr,  backgroundColor: 'rgba(245,195,90,0.55)',  stack: 'vol' },
+            { label: 'Cumulative', data: cum, type: 'line', borderColor: '#f0a040', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false, yAxisID: 'y2' },
+          ]
+        }, options: cfg
+      });
+    }
+
+    // ── 4. Volume Outliers ───────────────────────────────────────
+    function buildOutliers(range) {
+      const n = { '3M': 90, '6M': 180, '1Y': 365 }[range] || 90;
+      const unit = n <= 90 ? 'day' : 'week';
+      const labels = genLabels(Math.min(n, 52), unit);
+      const pts = labels.length;
+      const vol = genBars(pts, 12, 4);
+      const mean = vol.reduce((a,b) => a+b, 0) / pts;
+      const std  = Math.sqrt(vol.reduce((a,b) => a + (b-mean)**2, 0) / pts);
+      const threshold = mean + 2 * std;
+      const outlierCount = vol.filter(v => v > threshold).length;
+      const lastOutlierIdx = [...vol].reverse().findIndex(v => v > threshold);
+      const lastOutlierLabel = lastOutlierIdx >= 0 ? labels[pts - 1 - lastOutlierIdx] : 'None';
+      const excess = vol.filter(v => v > threshold).map(v => v - threshold);
+      const avgExcess = excess.length ? (excess.reduce((a,b)=>a+b,0)/excess.length).toFixed(1) : '0';
+      document.getElementById('o-count').textContent = outlierCount;
+      document.getElementById('o-last').textContent  = lastOutlierLabel;
+      document.getElementById('o-avg').textContent   = '+' + avgExcess + 'B';
+      const sigEl = document.getElementById('o-sig');
+      sigEl.textContent = outlierCount > 8 ? 'Elevated' : outlierCount > 4 ? 'Normal' : 'Quiet';
+      sigEl.className = 'cstat-val ' + (outlierCount > 8 ? 'gold' : outlierCount > 4 ? 'blue' : 'teal');
+      const cum = cumulative(vol);
+      const barColors = vol.map(v => v > threshold ? 'rgba(240,160,64,0.85)' : 'rgba(77,186,135,0.5)');
+      if (charts.outliers) charts.outliers.destroy();
+      const cfg = chartDefaults();
+      cfg.scales.y.ticks.callback = v => v.toFixed(0) + 'B';
+      cfg.scales.y2 = { position: 'left', grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.15)', font: { family: 'DM Mono, monospace', size: 9 }, callback: v => (v/1000).toFixed(1)+'T' }, border: { display: false } };
+      charts.outliers = makeChart('canvas-outliers', {
+        type: 'bar', data: { labels,
+          datasets: [
+            { label: 'Volume', data: vol, backgroundColor: barColors },
+            { label: 'Cumulative', data: cum, type: 'line', borderColor: 'rgba(240,160,64,0.6)', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false, yAxisID: 'y2' },
+          ]
+        }, options: cfg
+      });
+    }
+
+    // ── 5. Volume by Region ──────────────────────────────────────
+    function buildRegion(range) {
+      const n = { '1M': 30, '3M': 90, '6M': 180, '1Y': 365 }[range] || 30;
+      const unit = n <= 30 ? 'day' : 'week';
+      const labels = genLabels(Math.min(n, 52), unit);
+      const pts = labels.length;
+      const asia = genBars(pts, 18, 5);
+      const us   = genBars(pts, 8,  3);
+      const eu   = genBars(pts, 4,  1.5);
+      const total = asia.map((v,i) => v + us[i] + eu[i]);
+      const cum = cumulative(total);
+      const asiaAvg = (asia.reduce((a,b)=>a+b,0)/pts).toFixed(1);
+      const usAvg   = (us.reduce((a,b)=>a+b,0)/pts).toFixed(1);
+      const euAvg   = (eu.reduce((a,b)=>a+b,0)/pts).toFixed(1);
+      document.getElementById('r-asia').textContent = asiaAvg + 'B';
+      document.getElementById('r-us').textContent   = usAvg   + 'B';
+      document.getElementById('r-eu').textContent   = euAvg   + 'B';
+      document.getElementById('r-dom').textContent  = 'Asia';
+      document.getElementById('r-cum').textContent  = (cum[pts-1]/1000).toFixed(2) + 'T';
+      if (charts.region) charts.region.destroy();
+      const cfg = chartDefaults();
+      cfg.scales.y.ticks.callback = v => v.toFixed(0) + 'B';
+      cfg.scales.y2 = { position: 'left', grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.15)', font: { family: 'DM Mono, monospace', size: 9 }, callback: v => (v/1000).toFixed(1)+'T' }, border: { display: false } };
+      if (charts.region) charts.region.destroy();
+      charts.region = makeChart('canvas-region', {
+        type: 'bar', data: { labels,
+          datasets: [
+            { label: 'Asia', data: asia, backgroundColor: 'rgba(77,186,135,0.55)',  stack: 'reg' },
+            { label: 'US',   data: us,   backgroundColor: 'rgba(110,158,245,0.55)', stack: 'reg' },
+            { label: 'EU',   data: eu,   backgroundColor: 'rgba(245,195,90,0.55)',  stack: 'reg' },
+            { label: 'Cumulative', data: cum, type: 'line', borderColor: '#f0a040', borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false, yAxisID: 'y2' },
+          ]
+        }, options: cfg
+      });
+    }
+
+    function initAllCharts() {
+      buildBasis('1M');
+      buildSpread('1D');
+      buildVolume('1M');
+      buildOutliers('3M');
+      buildRegion('1M');
+    }
+
+    // Tab switching per chart
+    const tabBuilders = { basis: buildBasis, spread: buildSpread, volume: buildVolume, outliers: buildOutliers, region: buildRegion };
+    function setTab(chart, range, el) {
+      el.closest('.chart-card').querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      tabBuilders[chart]?.(range);
+    }
+
+    // ── Render helpers (news page) ───────────────────────────────
     function renderScenarios(scenarios) {
       document.getElementById('scenarios-grid').innerHTML = scenarios.map(s => `
         <div class="scenario-card ${s.type}">
-          <div class="card-header">
-            <div class="card-title">${s.title}</div>
-            <div class="prob-badge">${s.prob.replace(/~/g, '')}</div>
-          </div>
+          <div class="card-header"><div class="card-title">${s.title}</div><div class="prob-badge">${s.prob.replace(/~/g,'')}</div></div>
           <div class="card-trigger">${s.trigger} <span>${s.trigger_sub}</span></div>
           <div class="card-desc">${s.desc}</div>
           <div class="asset-row">
@@ -494,12 +800,10 @@
       document.getElementById('headline').innerHTML = lines.join('<br>');
     }
 
-    // ── Generate scenarios ───────────────────────────────────────
     async function generateScenarios() {
       const btn = document.getElementById('gen-btn');
       const loadingMsg = document.getElementById('loading-msg');
       const errorBanner = document.getElementById('error-banner');
-
       btn.disabled = true;
       btn.textContent = 'Generating...';
       loadingMsg.style.display = 'block';
@@ -534,28 +838,19 @@ Return ONLY valid JSON, no markdown. Probabilities must NOT include a ~ symbol:
 }`;
 
       try {
-        const resp = await fetch(WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt })
-        });
-
+        const resp = await fetch(WORKER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
         if (!resp.ok) throw new Error(`Worker responded ${resp.status}`);
-
         const data = await resp.json();
         const raw = (data.text || '').replace(/```json|```/g, '').trim();
         const d = JSON.parse(raw);
-
         if (d.headline) renderHeadline(d.headline);
         if (d.subhead)  document.getElementById('subhead').textContent = d.subhead;
         if (d.scenarios?.length === 4) renderScenarios(d.scenarios);
         if (d.equity_drivers) renderDrivers(d.equity_drivers, 'equity-drivers');
         if (d.btc_drivers)    renderDrivers(d.btc_drivers,    'btc-drivers');
-
         document.getElementById('week-label').textContent = TRADING_WEEK;
-
       } catch (err) {
-        errorBanner.textContent = `Generation failed: ${err.message}. Check your Worker URL is configured.`;
+        errorBanner.textContent = `Generation failed: ${err.message}`;
         errorBanner.style.display = 'block';
       } finally {
         btn.disabled = false;
