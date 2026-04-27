@@ -101,24 +101,29 @@
     .driver-detail { color: rgba(255,255,255,0.35); }
 
     /* ── Weekly Intel page ── */
-    .intel-content { padding: 20px 28px 0; }
-    .intel-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 28px 0; }
-    .intel-pill { border: 0.5px solid rgba(255,255,255,0.2); border-radius: 0; padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-    .intel-dot { width: 7px; height: 7px; border-radius: 50%; background: #e07070; animation: pulse 1.4s ease-in-out infinite; flex-shrink: 0; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+    .intel-content { padding: 20px 56px 0; }
+    .intel-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 56px 0; }
+    .intel-nav-left { display: flex; align-items: center; gap: 10px; }
+    .intel-pill { border: 0.5px solid #e07070; border-radius: 0; padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #e07070; text-transform: uppercase; }
+    .intel-refresh-icon { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+    .intel-refresh-icon:hover svg { opacity: 1; }
+    .intel-refresh-icon svg { width: 14px; height: 14px; opacity: 0.7; transition: opacity 0.15s; stroke: #fff; }
+    .intel-refresh-icon:disabled { cursor: not-allowed; }
+    .intel-refresh-icon:disabled svg { opacity: 0.7; stroke: #fff; }
+    .intel-refresh-icon.spinning svg { animation: spin 1s linear infinite; opacity: 1; }
 
     .intel-assets-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 40px;
     }
 
     .asset-box {
       border: 0.5px solid rgba(255,255,255,0.08);
       border-radius: 0;
-      padding: 20px 18px 18px;
-      min-height: 160px;
+      padding: 18px 16px 16px;
+      min-height: 138px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -171,29 +176,6 @@
       letter-spacing: 0.02em;
     }
 
-    .intel-gen-btn {
-      display: block;
-      width: 100%;
-      margin-bottom: 16px;
-      background: transparent;
-      border: 0.5px solid rgba(255,255,255,0.12);
-      border-radius: 0;
-      -webkit-border-radius: 0;
-      appearance: none;
-      -webkit-appearance: none;
-      color: rgba(255,255,255,0.4);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 12px;
-      font-weight: 400;
-      letter-spacing: 0.04em;
-      padding: 9px;
-      cursor: pointer;
-      text-align: center;
-      transition: border-color 0.15s, color 0.15s;
-      outline: none;
-    }
-    .intel-gen-btn:hover   { border-color: rgba(255,255,255,0.28); color: rgba(255,255,255,0.75); }
-    .intel-gen-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     .data-content { padding: 24px 28px 0; }
     .data-page-header { margin-bottom: 24px; }
     .data-page-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: #f0ede6; margin-bottom: 4px; }
@@ -238,26 +220,37 @@
     .red-bg    { background: #e07070; }
 
     /* ── Event Calendar page ── */
-    .cal-page-content { padding: 20px 28px 0; }
-    .cal-page-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 28px 0; }
-    .cal-page-pill { border: 0.5px solid rgba(255,255,255,0.2); border-radius: 0; padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+    .cal-page-content { padding: 20px 56px 0; }
+    .cal-page-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 56px 0; }
+    .cal-page-pill { border: 0.5px solid #4a9eed; border-radius: 0; padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #4a9eed; text-transform: uppercase; }
+    .cal-nav-left { display: flex; align-items: center; gap: 10px; }
+    .cal-refresh-icon { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+    .cal-refresh-icon:hover svg { opacity: 1; }
+    .cal-refresh-icon svg { width: 14px; height: 14px; opacity: 0.7; transition: opacity 0.15s; stroke: #fff; }
+    .cal-refresh-icon:disabled { cursor: not-allowed; }
+    .cal-refresh-icon:disabled svg { opacity: 0.7; stroke: #fff; }
+    .cal-refresh-icon.spinning svg { animation: spin 1s linear infinite; opacity: 1; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .page-next-arrow, .page-prev-arrow { position: absolute; bottom: 20px; background: transparent; border: none; cursor: pointer; padding: 8px; transition: opacity 0.15s; }
+    .page-next-arrow { right: 56px; }
+    .page-prev-arrow { left: 56px; }
+    .page-next-arrow:hover, .page-prev-arrow:hover { opacity: 1; }
+    .page-next-arrow svg, .page-prev-arrow svg { width: 32px; height: 12px; stroke: rgba(255,255,255,0.6); stroke-width: 1.5; fill: none; }
+    .page-next-arrow:hover svg, .page-prev-arrow:hover svg { stroke: #fff; }
 
     .cal-page-headline { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 700; line-height: 1.08; margin-bottom: 10px; color: #f0ede6; letter-spacing: -0.01em; }
     .cal-page-headline .accent-gold { color: #f5c35a; }
     .cal-page-headline .accent-teal { color: #6ecfb5; }
     .cal-page-headline .accent-red  { color: #e07070; }
-    .cal-page-sub { font-size: 12px; color: rgba(255,255,255,0.36); line-height: 1.6; max-width: 900px; margin-bottom: 20px; }
 
-    .cal-refresh-btn { display: block; width: 100%; margin-bottom: 16px; background: transparent; border: 0.5px solid rgba(255,255,255,0.12); border-radius: 0; -webkit-border-radius: 0; appearance: none; -webkit-appearance: none; color: rgba(255,255,255,0.4); font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.04em; padding: 9px; cursor: pointer; text-align: center; transition: border-color 0.15s, color 0.15s; outline: none; }
-    .cal-refresh-btn:hover { border-color: rgba(255,255,255,0.28); color: rgba(255,255,255,0.75); }
-    .cal-refresh-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    .cal-week-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 16px; }
+    .cal-week-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 40px; }
 
     .cal-day-col {
       border: 0.5px solid rgba(255,255,255,0.08);
       border-radius: 0;
-      min-height: 500px;
+      min-height: calc(100vh - 220px);
       display: flex;
       flex-direction: column;
     }
@@ -341,18 +334,21 @@
       letter-spacing: 0.06em;
     }
     /* ── Crypto Intel page ── */
-    .crypto-page-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 28px 0; }
-    .crypto-page-pill { border: 0.5px solid rgba(255,255,255,0.2); border-radius: 0; padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); text-transform: uppercase; display: flex; align-items: center; gap: 7px; }
-    .crypto-dot { width: 7px; height: 7px; border-radius: 50%; background: #f5c35a; flex-shrink: 0; }
-    .crypto-content { padding: 20px 28px 0; }
+    .crypto-page-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 56px 0; }
+    .crypto-nav-left { display: flex; align-items: center; gap: 10px; }
+    .crypto-page-pill { border: 0.5px solid #f5c35a; border-radius: 0; padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #f5c35a; text-transform: uppercase; }
+    .crypto-refresh-icon { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+    .crypto-refresh-icon:hover svg { opacity: 1; }
+    .crypto-refresh-icon svg { width: 14px; height: 14px; opacity: 0.7; transition: opacity 0.15s; stroke: #fff; }
+    .crypto-refresh-icon:disabled { cursor: not-allowed; }
+    .crypto-refresh-icon:disabled svg { opacity: 0.7; stroke: #fff; }
+    .crypto-refresh-icon.spinning svg { animation: spin 1s linear infinite; opacity: 1; }
+    .crypto-content { padding: 20px 56px 0; }
     .crypto-headline { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 700; line-height: 1.08; margin-bottom: 10px; color: #f0ede6; letter-spacing: -0.01em; }
     .crypto-headline .accent-gold { color: #f5c35a; }
     .crypto-headline .accent-teal { color: #6ecfb5; }
     .crypto-headline .accent-red  { color: #e07070; }
     .crypto-subhead { font-size: 12px; color: rgba(255,255,255,0.36); line-height: 1.6; max-width: 100%; margin-bottom: 18px; }
-    .crypto-gen-btn { display: block; width: 100%; margin-bottom: 16px; background: transparent; border: 0.5px solid rgba(255,255,255,0.12); border-radius: 0; -webkit-border-radius: 0; appearance: none; -webkit-appearance: none; color: rgba(255,255,255,0.4); font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.04em; padding: 9px; cursor: pointer; text-align: center; transition: border-color 0.15s, color 0.15s; outline: none; }
-    .crypto-gen-btn:hover { border-color: rgba(255,255,255,0.28); color: rgba(255,255,255,0.75); }
-    .crypto-gen-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     .crypto-date-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
     .crypto-date-label { font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.35); }
     .crypto-date-input { background: transparent; border: 0.5px solid rgba(255,255,255,0.15); border-radius: 0; color: #e8e6e0; font-family: 'DM Mono', monospace; font-size: 11px; padding: 5px 10px; outline: none; cursor: pointer; color-scheme: dark; }
@@ -423,9 +419,8 @@
             News Feed <span class="chevron">▼</span>
           </button>
           <div class="nav-dropdown-menu">
-            <button class="nav-dropdown-item active" onclick="switchPage('news'); closeDropdowns()">Morning Brief</button>
+            <button class="nav-dropdown-item active" onclick="switchPage('calendar'); closeDropdowns()">Event Calendar</button>
             <button class="nav-dropdown-item" onclick="switchPage('intel'); closeDropdowns()">Weekly Intel</button>
-            <button class="nav-dropdown-item" onclick="switchPage('calendar'); closeDropdowns()">Event Calendar</button>
             <button class="nav-dropdown-item" onclick="switchPage('crypto'); closeDropdowns()">Crypto Intel</button>
           </div>
         </div>
@@ -439,7 +434,7 @@
   </nav>
 
   <!-- NEWS & EVENTS -->
-  <div class="page active" id="page-news">
+  <div class="page" id="page-news">
     <div class="dashboard-nav">
       <div class="nav-pill">Scenarios + Calendar + Drivers · 1/1</div>
       <div class="week-range" id="week-label"></div>
@@ -551,31 +546,31 @@
         </div>
       </div>
     </div>
-    <div class="footer-bar">
-      <div class="footer-handle">@ceruleus_capital</div>
-      <div class="footer-tag">Scenarios + Calendar · Ceruleus Capital</div>
-    </div>
   </div>
 
   <!-- EVENT CALENDAR -->
-  <div class="page" id="page-calendar">
+  <div class="page active" id="page-calendar">
 
     <div class="cal-page-nav">
-      <div class="cal-page-pill">Event Calendar · 1/1</div>
+      <div class="cal-nav-left">
+        <div class="cal-page-pill">Event Calendar · 1/3</div>
+        <button class="cal-refresh-icon" id="cal-refresh-btn" onclick="generateCalendar()" title="Refresh Calendar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 4v6h-6"></path>
+            <path d="M1 20v-6h6"></path>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </button>
+      </div>
       <div class="week-range" id="cal-week-label"></div>
     </div>
 
     <div class="cal-page-content">
 
       <div class="cal-page-headline" id="cal-headline">
-        <span class="accent-teal">Refresh</span> to load<br>this week's event calendar.
-      </div>
-      <div class="cal-page-sub" id="cal-sub">
-        Hit refresh — Claude pulls your Google Calendar events and supplements with key macro, earnings, and geopolitical events from the web.
+        <span class="accent-teal">Refresh</span> to load this week's event calendar.
       </div>
 
-      <button class="cal-refresh-btn" id="cal-refresh-btn" onclick="generateCalendar()">Refresh Calendar</button>
-      <div class="loading-msg" id="cal-loading">Pulling calendar events + web research...</div>
       <div class="error-banner" id="cal-error"></div>
 
       <div class="cal-week-grid" id="cal-week-grid">
@@ -604,19 +599,23 @@
 
     </div>
 
-    <div class="footer-bar">
-      <div class="footer-handle">@ceruleus_capital</div>
-      <div class="footer-tag">Event Calendar · Ceruleus Capital</div>
-    </div>
+    <button class="page-next-arrow" onclick="switchPage('intel')" title="Weekly Intel"><svg viewBox="0 0 32 12"><line x1="0" y1="6" x2="26" y2="6"/><polyline points="22,2 28,6 22,10"/></svg></button>
+
   </div>
 
   <!-- CRYPTO INTEL -->
   <div class="page" id="page-crypto">
 
     <div class="crypto-page-nav">
-      <div class="crypto-page-pill">
-        <span class="crypto-dot"></span>
-        ₿ Crypto Intel · 1/1
+      <div class="crypto-nav-left">
+        <div class="crypto-page-pill">Crypto Intel · 3/3</div>
+        <button class="crypto-refresh-icon" id="crypto-refresh-btn" onclick="generateCrypto()" title="Refresh Crypto Intel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 4v6h-6"></path>
+            <path d="M1 20v-6h6"></path>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </button>
       </div>
       <div class="week-range" id="crypto-week-label"></div>
     </div>
@@ -624,7 +623,7 @@
     <div class="crypto-content">
 
       <div class="crypto-headline" id="crypto-headline">
-        <span class="accent-gold">Bitcoin</span> Intelligence.<br>Set a date. Generate the brief.
+        <span class="accent-gold">Bitcoin</span> Intelligence. Set a date. Generate the brief.
       </div>
       <div class="crypto-subhead" id="crypto-subhead">
         Pick a start date below — Claude pulls performance, sentiment, dominance, ETF flows, and builds a market timeline from that date to today.
@@ -636,8 +635,6 @@
         <button class="crypto-date-update" onclick="generateCrypto()">Update</button>
       </div>
 
-      <button class="crypto-gen-btn" id="crypto-gen-btn" onclick="generateCrypto()">Generate Crypto Intel</button>
-      <div class="loading-msg" id="crypto-loading">Pulling performance data + building timeline...</div>
       <div class="error-banner" id="crypto-error"></div>
 
       <div class="crypto-body">
@@ -707,19 +704,23 @@
 
     </div>
 
-    <div class="footer-bar">
-      <div class="footer-handle">@ceruleus_capital</div>
-      <div class="footer-tag">Crypto Intel · Ceruleus Capital</div>
-    </div>
+    <button class="page-prev-arrow" onclick="switchPage('intel')" title="Weekly Intel"><svg viewBox="0 0 32 12"><line x1="6" y1="6" x2="32" y2="6"/><polyline points="10,2 4,6 10,10"/></svg></button>
+
   </div>
 
   <!-- WEEKLY INTEL -->
   <div class="page" id="page-intel">
 
     <div class="intel-nav">
-      <div class="intel-pill">
-        <span class="intel-dot"></span>
-        Weekly Market Intel · 1/1
+      <div class="intel-nav-left">
+        <div class="intel-pill">Weekly Intel · 2/3</div>
+        <button class="intel-refresh-icon" id="intel-refresh-btn" onclick="generateIntel()" title="Refresh Intel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 4v6h-6"></path>
+            <path d="M1 20v-6h6"></path>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </button>
       </div>
       <div class="week-range" id="intel-week-label"></div>
     </div>
@@ -727,14 +728,12 @@
     <div class="intel-content">
 
       <div class="headline" id="intel-headline" style="margin-bottom:10px">
-        <span class="accent-teal">Generate Intel</span> to load<br>this week's market snapshot.
+        <span class="accent-teal">Refresh</span> to load this week's market snapshot.
       </div>
       <div class="subhead" id="intel-subhead" style="margin-bottom:20px">
-        Hit the button below — Claude will pull Friday's closes, weekly performance, and your calendar to generate the full weekly brief.
+        Hit refresh — Claude will pull Friday's closes, weekly performance, and macro context to generate the full weekly brief.
       </div>
 
-      <button class="intel-gen-btn" id="intel-gen-btn" onclick="generateIntel()">Generate Weekly Intel</button>
-      <div class="loading-msg" id="intel-loading">Searching for Friday closes + pulling your calendar...</div>
       <div class="error-banner" id="intel-error"></div>
 
       <div class="intel-assets-grid" id="intel-grid">
@@ -752,10 +751,9 @@
 
     </div>
 
-    <div class="footer-bar">
-      <div class="footer-handle">@ceruleus_capital</div>
-      <div class="footer-tag">Weekly Market Intel · Ceruleus Capital</div>
-    </div>
+    <button class="page-prev-arrow" onclick="switchPage('calendar')" title="Event Calendar"><svg viewBox="0 0 32 12"><line x1="6" y1="6" x2="32" y2="6"/><polyline points="10,2 4,6 10,10"/></svg></button>
+    <button class="page-next-arrow" onclick="switchPage('crypto')" title="Crypto Intel"><svg viewBox="0 0 32 12"><line x1="0" y1="6" x2="26" y2="6"/><polyline points="22,2 28,6 22,10"/></svg></button>
+
   </div>
 
   <!-- MARKET DATA — single page, all charts -->
@@ -987,22 +985,19 @@
       document.querySelectorAll('.nav-dropdown-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.nav-dropdown-item').forEach(i => i.classList.remove('active'));
       const items = document.querySelectorAll('#dd-news .nav-dropdown-item');
-      if (pageKey === 'news') {
+      if (pageKey === 'calendar') {
         document.querySelector('#dd-news .nav-dropdown-btn').classList.add('active');
         items[0].classList.add('active');
+        document.getElementById('cal-week-label').textContent = TRADING_WEEK;
       } else if (pageKey === 'intel') {
         document.querySelector('#dd-news .nav-dropdown-btn').classList.add('active');
         items[1].classList.add('active');
         document.getElementById('intel-week-label').textContent = TRADING_WEEK;
-      } else if (pageKey === 'calendar') {
-        document.querySelector('#dd-news .nav-dropdown-btn').classList.add('active');
-        items[2].classList.add('active');
-        document.getElementById('cal-week-label').textContent = TRADING_WEEK;
       } else if (pageKey === 'crypto') {
         document.querySelector('#dd-news .nav-dropdown-btn').classList.add('active');
-        items[3].classList.add('active');
+        items[2].classList.add('active');
         document.getElementById('crypto-week-label').textContent = TRADING_WEEK;
-      } else {
+      } else if (pageKey === 'data') {
         document.querySelector('#dd-data .nav-dropdown-btn').classList.add('active');
         if (!chartsInitialised) { initAllCharts(); chartsInitialised = true; }
       }
@@ -1011,8 +1006,7 @@
 
     // ── Crypto Intel generation ──────────────────────────────────
     async function generateCrypto() {
-      const btn = document.getElementById('crypto-gen-btn');
-      const loading = document.getElementById('crypto-loading');
+      const btn = document.getElementById('crypto-refresh-btn');
       const errorEl = document.getElementById('crypto-error');
       const dateInput = document.getElementById('crypto-date');
       const sinceDate = dateInput.value;
@@ -1024,8 +1018,7 @@
       document.getElementById('timeline-since-label').textContent = sinceFriendly;
 
       btn.disabled = true;
-      btn.textContent = 'Generating...';
-      loading.style.display = 'block';
+      btn.classList.add('spinning');
       errorEl.style.display = 'none';
 
       const prompt = `You are a crypto and macro analyst. Generate a comprehensive crypto intelligence brief for the period from ${sinceFriendly} to today (${TRADING_WEEK}).
@@ -1153,19 +1146,16 @@ For timeline: include 6-10 major events chronologically from ${sinceFriendly} to
         errorEl.style.display = 'block';
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Generate Crypto Intel';
-        loading.style.display = 'none';
+        btn.classList.remove('spinning');
       }
     }
 
     // ── Event Calendar generation ────────────────────────────────
     async function generateCalendar() {
       const btn = document.getElementById('cal-refresh-btn');
-      const loading = document.getElementById('cal-loading');
       const errorEl = document.getElementById('cal-error');
       btn.disabled = true;
-      btn.textContent = 'Refreshing...';
-      loading.style.display = 'block';
+      btn.classList.add('spinning');
       errorEl.style.display = 'none';
 
       // Build day date strings for the prompt
@@ -1251,7 +1241,6 @@ Be comprehensive — include 3-6 events per active day, 1-2 for quieter days.`;
           );
           document.getElementById('cal-headline').innerHTML = lines.join('<br>');
         }
-        if (d.subhead) document.getElementById('cal-sub').textContent = d.subhead;
 
         // Render day columns
         if (d.days?.length === 5) {
@@ -1286,19 +1275,16 @@ Be comprehensive — include 3-6 events per active day, 1-2 for quieter days.`;
         errorEl.style.display = 'block';
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Refresh Calendar';
-        loading.style.display = 'none';
+        btn.classList.remove('spinning');
       }
     }
 
     // ── Weekly Intel generation ──────────────────────────────────
     async function generateIntel() {
-      const btn = document.getElementById('intel-gen-btn');
-      const loading = document.getElementById('intel-loading');
+      const btn = document.getElementById('intel-refresh-btn');
       const errorEl = document.getElementById('intel-error');
       btn.disabled = true;
-      btn.textContent = 'Generating...';
-      loading.style.display = 'block';
+      btn.classList.add('spinning');
       errorEl.style.display = 'none';
 
       const prompt = `You are a macro trading analyst. Generate a weekly market intel brief for the week of ${TRADING_WEEK}.
@@ -1377,8 +1363,7 @@ Be precise with prices — use your best knowledge of recent closes. If uncertai
         errorEl.style.display = 'block';
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Regenerate Weekly Intel';
-        loading.style.display = 'none';
+        btn.classList.remove('spinning');
       }
     }
 
