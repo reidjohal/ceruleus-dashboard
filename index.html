@@ -1355,7 +1355,7 @@ Return ONLY valid JSON, no markdown:
 
 Day tier: "red" if any red events, "gold" if high-impact but no red, "plain" otherwise.
 Stars: count of red-tier events on that day (0-3, cap at 3).
-Be comprehensive — include 3-6 events per active day, 1-2 for quieter days.`;
+Include 3-5 events per active day, 1-2 for quieter days. Keep descriptions under 15 words each.`;
 
       try {
         const resp = await fetch(WORKER_URL, {
@@ -1365,7 +1365,12 @@ Be comprehensive — include 3-6 events per active day, 1-2 for quieter days.`;
         });
         if (!resp.ok) throw new Error(`Worker responded ${resp.status}`);
         const data = await resp.json();
-        const raw = (data.text || '').replace(/```json|```/g, '').trim();
+        let raw = (data.text || '').replace(/```json|```/g, '').trim();
+        // Safety net — if JSON is truncated, attempt to close it
+        if (!raw.endsWith('}')) {
+          const lastBrace = raw.lastIndexOf('},');
+          if (lastBrace > 0) raw = raw.substring(0, lastBrace + 1) + ']}';
+        }
         const d = JSON.parse(raw);
 
         // Render headline
