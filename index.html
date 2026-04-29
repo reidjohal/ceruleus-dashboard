@@ -38,6 +38,7 @@
     .dashboard-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 28px 0; }
     .nav-pill { border: 0.5px solid rgba(255,255,255,0.2); border-radius: 0; padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); text-transform: uppercase; }
     .week-range { font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.3); letter-spacing: 0.05em; }
+    .intel-last-updated { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.2); letter-spacing: 0.03em; margin-top: 2px; }
     .main-content { padding: 20px 28px 0; }
     .headline { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 700; line-height: 1.08; margin-bottom: 10px; color: #f0ede6; letter-spacing: -0.01em; }
     .headline .accent-gold { color: #f5c35a; }
@@ -102,8 +103,9 @@
 
     /* ── Market Pricing page ── */
     .intel-content { padding: 20px 56px 0; }
-    .intel-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 56px 0; }
+    .intel-nav { display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 56px 0; }
     .intel-nav-left { display: flex; align-items: center; gap: 10px; }
+    .intel-nav-right { display: flex; flex-direction: column; align-items: flex-end; }
     .intel-pill { border: 0.5px solid #4dba87; border-radius: 0; padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #4dba87; text-transform: uppercase; }
     .intel-refresh-icon { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
     .intel-refresh-icon:hover svg { opacity: 1; }
@@ -429,10 +431,10 @@
     .metric-box-label { font-family: 'DM Mono', monospace; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.28); margin-bottom: 6px; }
     .metric-box-val { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; margin-bottom: 3px; }
     .metric-box-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.28); }
-    .fear-extreme { color: #e07070; }
-    .fear-fear    { color: #f0a040; }
-    .fear-neutral { color: rgba(255,255,255,0.6); }
-    .fear-greed   { color: #4dba87; }
+    .fear-extreme { color: #f5c35a; }
+    .fear-fear    { color: #f5c35a; }
+    .fear-neutral { color: #f5c35a; }
+    .fear-greed   { color: #f5c35a; }
     .crypto-timeline-box { border: 0.5px solid rgba(255,255,255,0.08); padding: 16px; }
     .crypto-timeline-label { font-family: 'DM Mono', monospace; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.28); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
     .timeline-dot-label { color: #6ecfb5; }
@@ -453,6 +455,7 @@
     .crypto-right-row:last-child { border-bottom: none; }
     .crr-label { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 400; }
     .crr-val { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; }
+    .crr-val.polymarket-odds { font-weight: 600; }
     .crr-section-header { padding: 8px 18px 6px; background: rgba(255,255,255,0.03); border-bottom: 0.5px solid rgba(255,255,255,0.06); font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.22); }
 
     .footer-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 28px 14px; margin-top: 16px; }
@@ -711,7 +714,7 @@
           <div class="crypto-metrics-row" id="crypto-metrics-row">
             <div class="metric-box">
               <div class="metric-box-label">Fear &amp; Greed</div>
-              <div class="metric-box-val" style="color:#f0a040" id="c-fg-val">55 → 67</div>
+              <div class="metric-box-val" style="color:#f5c35a" id="c-fg-val">55 → 67</div>
               <div class="metric-box-sub" id="c-fg-sub">Greed · +12 since Feb 28</div>
             </div>
             <div class="metric-box">
@@ -774,20 +777,20 @@
           <div class="crypto-right-row"><span class="crr-label">From ATH</span><span class="crr-val" style="color:#e07070">-8.2%</span></div>
           <div class="crypto-right-row"><span class="crr-label">From Yearly Low</span><span class="crr-val" style="color:#4dba87">+42.8%</span></div>
           <div class="crr-section-header">Strategy (MSTR)</div>
-          <div class="crypto-right-row"><span class="crr-label">Bought This Week</span><span class="crr-val" style="color:#4dba87">2,480 BTC</span></div>
-          <div class="crypto-right-row"><span class="crr-label">Total BTC Holdings</span><span class="crr-val" style="color:#f5c35a">528,185 BTC</span></div>
-          <div class="crypto-right-row"><span class="crr-label">Avg Buy Price</span><span class="crr-val" style="color:rgba(255,255,255,0.7)">$62,420</span></div>
-          <div class="crypto-right-row"><span class="crr-label">mNAV</span><span class="crr-val" style="color:#6e9ef5">2.8x</span></div>
+          <div class="crypto-right-row"><span class="crr-label">Bought This Week</span><span class="crr-val" style="color:rgba(255,255,255,0.75)">2,480 BTC</span></div>
+          <div class="crypto-right-row"><span class="crr-label">Total BTC Holdings</span><span class="crr-val" style="color:rgba(255,255,255,0.75)">528,185 BTC</span></div>
+          <div class="crypto-right-row"><span class="crr-label">Avg Buy Price</span><span class="crr-val" style="color:rgba(255,255,255,0.75)">$62,420</span></div>
+          <div class="crypto-right-row"><span class="crr-label">mNAV</span><span class="crr-val" style="color:rgba(255,255,255,0.75)">2.8x</span></div>
           <div class="crr-section-header">Stretch (STRC)</div>
-          <div class="crypto-right-row"><span class="crr-label">Current Price</span><span class="crr-val" style="color:#4dba87">$14.28</span></div>
-          <div class="crypto-right-row"><span class="crr-label">Annual Rate</span><span class="crr-val" style="color:#f5c35a">18.5%</span></div>
-          <div class="crypto-right-row"><span class="crr-label">Volume (Daily)</span><span class="crr-val" style="color:#6e9ef5">$18.4M</span></div>
-          <div class="crypto-right-row"><span class="crr-label">Volume (Weekly)</span><span class="crr-val" style="color:#6e9ef5">$142M</span></div>
+          <div class="crypto-right-row"><span class="crr-label">Current Price</span><span class="crr-val" style="color:rgba(255,255,255,0.75)">$14.28</span></div>
+          <div class="crypto-right-row"><span class="crr-label">Annual Rate</span><span class="crr-val" style="color:rgba(255,255,255,0.75)">18.5%</span></div>
+          <div class="crypto-right-row"><span class="crr-label">Volume (Daily)</span><span class="crr-val" style="color:rgba(255,255,255,0.75)">$18.4M</span></div>
+          <div class="crypto-right-row"><span class="crr-label">Volume (Weekly)</span><span class="crr-val" style="color:rgba(255,255,255,0.75)">$142M</span></div>
           <div class="crr-section-header">Polymarket · BTC</div>
-          <div class="crypto-right-row"><span class="crr-label">$100K or $70K First?</span><span class="crr-val" style="color:#4dba87">78% $100K</span></div>
-          <div class="crypto-right-row"><span class="crr-label">April Close Price</span><span class="crr-val" style="color:#f5c35a">$85K-$90K · 42%</span></div>
-          <div class="crypto-right-row"><span class="crr-label">New ATH in 2026</span><span class="crr-val" style="color:#6e9ef5">64%</span></div>
-          <div class="crypto-right-row"><span class="crr-label">Above $95K by June 1</span><span class="crr-val" style="color:#f0a040">52%</span></div>
+          <div class="crypto-right-row"><span class="crr-label">$100K or $70K First?</span><span class="crr-val polymarket-odds" data-odds="78">$100K · 78%</span></div>
+          <div class="crypto-right-row"><span class="crr-label">April Close Price</span><span class="crr-val" style="color:rgba(255,255,255,0.75)">$85K-$90K · 42%</span></div>
+          <div class="crypto-right-row"><span class="crr-label">New ATH in 2026</span><span class="crr-val polymarket-odds" data-odds="64">64%</span></div>
+          <div class="crypto-right-row"><span class="crr-label">Above $95K by June 1</span><span class="crr-val polymarket-odds" data-odds="52">52%</span></div>
         </div>
 
       </div>
@@ -812,7 +815,10 @@
           </svg>
         </button>
       </div>
-      <div class="week-range" id="intel-week-label"></div>
+      <div class="intel-nav-right">
+        <div class="week-range" id="intel-week-label"></div>
+        <div class="intel-last-updated" id="intel-last-updated"></div>
+      </div>
     </div>
 
     <div class="intel-content">
@@ -827,21 +833,21 @@
       <div class="error-banner" id="intel-error"></div>
 
       <div class="intel-day-toggle">
-        <button class="intel-day-btn active" data-day="friday" onclick="switchPricingDay('friday')">Fri</button>
-        <button class="intel-day-btn" data-day="monday" onclick="switchPricingDay('monday')">Mon</button>
+        <button class="intel-day-btn active" data-day="friday" onclick="switchPricingDay('friday')">Fri Close</button>
+        <button class="intel-day-btn" data-day="monday" onclick="switchPricingDay('monday')">Mon Open</button>
       </div>
 
       <div class="intel-assets-grid" id="intel-grid">
-        <div class="asset-box neutral"><div class="asset-box-name">S&amp;P 500 (Fri)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-context">Generate intel to populate</div></div>
-        <div class="asset-box neutral"><div class="asset-box-name">DOW (Fri)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-context">Generate intel to populate</div></div>
-        <div class="asset-box neutral"><div class="asset-box-name">NASDAQ (Fri)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-context">Generate intel to populate</div></div>
-        <div class="asset-box neutral"><div class="asset-box-name">GOLD (Fri)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-context">Generate intel to populate</div></div>
-        <div class="asset-box neutral"><div class="asset-box-name">SILVER (Fri)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-context">Generate intel to populate</div></div>
-        <div class="asset-box neutral"><div class="asset-box-name">BITCOIN</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-context">Generate intel to populate</div></div>
-        <div class="asset-box neutral"><div class="asset-box-name">ETHEREUM</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-context">Generate intel to populate</div></div>
-        <div class="asset-box neutral"><div class="asset-box-name">DXY (Fri)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-context">Generate intel to populate</div></div>
-        <div class="asset-box neutral"><div class="asset-box-name">WTI OIL (Fri)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-context">Generate intel to populate</div></div>
-        <div class="asset-box neutral"><div class="asset-box-name">VIX (Fri)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-context">Generate intel to populate</div></div>
+        <div class="asset-box neutral"><div class="asset-box-name">S&amp;P 500 (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
+        <div class="asset-box neutral"><div class="asset-box-name">DOW (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
+        <div class="asset-box neutral"><div class="asset-box-name">NASDAQ (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
+        <div class="asset-box neutral"><div class="asset-box-name">GOLD (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
+        <div class="asset-box neutral"><div class="asset-box-name">SILVER (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
+        <div class="asset-box neutral"><div class="asset-box-name">BITCOIN</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
+        <div class="asset-box neutral"><div class="asset-box-name">ETHEREUM</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
+        <div class="asset-box neutral"><div class="asset-box-name">DXY (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
+        <div class="asset-box neutral"><div class="asset-box-name">WTI OIL (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
+        <div class="asset-box neutral"><div class="asset-box-name">VIX (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
       </div>
 
     </div>
@@ -1045,6 +1051,55 @@
     document.getElementById('cal-week-label').textContent = TRADING_WEEK;
     document.getElementById('crypto-week-label').textContent = TRADING_WEEK;
 
+    // Load saved intel from localStorage
+    (function loadSavedIntel() {
+      try {
+        const saved = localStorage.getItem('ceruleus-intel');
+        if (!saved) return;
+        const { data: d, timestamp, pricingDay } = JSON.parse(saved);
+        if (!d) return;
+
+        // Update pricing day toggle to match saved state
+        if (pricingDay) {
+          currentPricingDay = pricingDay;
+          document.querySelectorAll('.intel-day-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.day === pricingDay);
+          });
+        }
+
+        // Render headline
+        if (d.headline) {
+          const lines = d.headline.split('|').map(p =>
+            p.trim()
+             .replace(/\[gold\](.*?)\[\/gold\]/g, '<span class="accent-gold">$1</span>')
+             .replace(/\[teal\](.*?)\[\/teal\]/g, '<span class="accent-teal">$1</span>')
+             .replace(/\[red\](.*?)\[\/red\]/g,   '<span class="accent-red">$1</span>')
+          );
+          document.getElementById('intel-headline').innerHTML = lines.join('<br>');
+        }
+        if (d.subhead) document.getElementById('intel-subhead').textContent = d.subhead;
+
+        // Render asset boxes
+        if (d.assets?.length === 10) {
+          document.getElementById('intel-grid').innerHTML = d.assets.map(a => `
+            <div class="asset-box ${a.sentiment}">
+              <div class="asset-box-name">${a.name}</div>
+              <div class="asset-box-price">${a.price}</div>
+              <div class="asset-box-weekly">${a.weekly_return} wk</div>
+              <div class="asset-box-monthly">${a.monthly_return} mtd</div>
+              <div class="asset-box-volatility">${a.volatility}</div>
+            </div>`).join('');
+        }
+
+        // Show last updated timestamp
+        if (timestamp) {
+          document.getElementById('intel-last-updated').textContent = `Last updated: ${timestamp}`;
+        }
+      } catch(e) {
+        console.warn('Failed to load saved intel:', e);
+      }
+    })();
+
     // Set placeholder day headers with actual dates
     (function setCalPlaceholders() {
       const now = new Date();
@@ -1061,6 +1116,34 @@
         if (el) el.textContent = `${days[i]} ${months[d.getMonth()]}/${d.getDate()}`;
       });
     })();
+
+    // Polymarket odds gradient coloring function
+    function getPolymarketColor(odds) {
+      odds = Math.max(0, Math.min(100, odds));
+      if (odds < 50) {
+        // Red gradient: darker at 0%, lighter approaching 50%
+        // 0-10: #8b2020, 10-20: #a02828, 20-30: #b53030, 30-40: #ca3838, 40-50: #e04040
+        const redShades = ['#7a1c1c', '#8b2222', '#9c2828', '#ad2e2e', '#be3434', '#cf3a3a', '#e04040', '#e85050', '#f06060', '#f87070'];
+        const idx = Math.min(Math.floor(odds / 5), 9);
+        return redShades[idx];
+      } else {
+        // Green gradient: lighter at 50%, brighter approaching 100%
+        // 50-60: #2d8a4d, 60-70: #36a05a, 70-80: #3fb667, 80-90: #48cc74, 90-100: #51e281
+        const greenShades = ['#2d7a43', '#348a4d', '#3b9a57', '#42aa61', '#49ba6b', '#50ca75', '#57da7f', '#5eea89', '#65fa93', '#6cff9d'];
+        const idx = Math.min(Math.floor((odds - 50) / 5), 9);
+        return greenShades[idx];
+      }
+    }
+
+    function applyPolymarketColors() {
+      document.querySelectorAll('.polymarket-odds').forEach(el => {
+        const odds = parseInt(el.dataset.odds, 10);
+        if (!isNaN(odds)) {
+          el.style.color = getPolymarketColor(odds);
+        }
+      });
+    }
+    applyPolymarketColors();
 
     function toggleDropdown(id) {
       const dd = document.getElementById(id);
@@ -1173,29 +1256,32 @@ Return ONLY valid JSON, no markdown:
     { "date": "Mon DD", "text": "Event description. Market impact.", "tier": "red|teal|gold|blue|purple" }
   ],
   "right_panel": [
-    { "section": "Strategy (MSTR)" },
-    { "label": "Bought This Week",    "val": "X,XXX BTC",         "color": "teal|white" },
-    { "label": "Total BTC Holdings",  "val": "XXX,XXX BTC",       "color": "gold" },
-    { "label": "Avg Buy Price",       "val": "$XX,XXX",           "color": "teal|red" },
-    { "section": "STRC" },
-    { "label": "Volume (7D)",         "val": "$XXXm",             "color": "white" },
-    { "section": "Sentiment" },
-    { "label": "Fear & Greed",        "val": "XX — Label",        "color": "red|orange|white|teal" },
+    { "section": "Prices" },
     { "label": "From ATH",            "val": "-XX%",              "color": "red" },
-    { "section": "Polymarket · BTC Price" },
-    { "label": "Above $80K (Apr 30)", "val": "XX%",               "color": "teal|red|gold" },
-    { "label": "New ATH in 2026",     "val": "XX%",               "color": "teal|red|gold" },
-    { "label": "Above $100K (Dec 31)","val": "XX%",               "color": "teal|red|gold" }
+    { "label": "From Yearly Low",     "val": "+XX%",              "color": "teal" },
+    { "section": "Strategy (MSTR)" },
+    { "label": "Bought This Week",    "val": "X,XXX BTC" },
+    { "label": "Total BTC Holdings",  "val": "XXX,XXX BTC" },
+    { "label": "Avg Buy Price",       "val": "$XX,XXX" },
+    { "label": "mNAV",                "val": "X.Xx" },
+    { "section": "Stretch (STRC)" },
+    { "label": "Current Price",       "val": "$XX.XX" },
+    { "label": "Annual Rate",         "val": "XX.X%" },
+    { "label": "Volume (Daily)",      "val": "$XXm" },
+    { "label": "Volume (Weekly)",     "val": "$XXXm" },
+    { "section": "Polymarket · BTC" },
+    { "label": "$100K or $70K First?","val": "$100K · XX%",       "odds": 78 },
+    { "label": "April Close Price",   "val": "$XXK-$XXK · XX%" },
+    { "label": "New ATH in 2026",     "val": "XX%",               "odds": 64 },
+    { "label": "Above $95K by June 1","val": "XX%",               "odds": 52 }
   ]
 }
 
 For the right panel:
-- Strategy (MSTR) bought this week: how many BTC Strategy/MicroStrategy purchased in the last 7 days per their public filings/announcements
-- Strategy total holdings: their total BTC treasury and average purchase price
-- STRC 7D volume: trading volume for STRC (Strategy's preferred stock) over the past week
-- Fear & Greed: current index reading with label (Extreme Fear/Fear/Neutral/Greed/Extreme Greed)
-- From ATH: BTC's percentage decline from its all-time high of ~$109K
-- Polymarket odds: your best estimate of current market odds for each BTC price market. Format as "XX%" with color teal if >60%, gold if 40-60%, red if <40%
+- Prices section: "From ATH" is BTC's percentage decline from all-time high (~$109K), use color "red". "From Yearly Low" is percentage gain from 2024/2025 low, use color "teal".
+- Strategy (MSTR): bought this week, total holdings, avg buy price, mNAV (multiple of NAV). No color field needed.
+- Stretch (STRC): current price, annual yield rate, daily and weekly volume. No color field needed.
+- Polymarket · BTC: Include "odds" field (number 0-100) for percentage bets. Format "$100K or $70K First?" as "$100K · XX%" or "$70K · XX%" based on which is favored. "April Close Price" format as "$XXK-$XXK · XX%". Other odds just "XX%".
 For timeline: include 6-10 major events chronologically from ${sinceFriendly} to today. Cover geopolitical events (Iran war, Hormuz), Fed decisions, BTC price milestones, ETF flow records, macro shocks, MSTR purchases. Be specific with dates and prices.`;
 
       try {
@@ -1261,14 +1347,31 @@ For timeline: include 6-10 major events chronologically from ${sinceFriendly} to
         // Right panel
         const colorMap = { teal: '#4dba87', red: '#e07070', gold: '#f5c35a', blue: '#6e9ef5', orange: '#f0a040', white: 'rgba(255,255,255,0.75)' };
         if (d.right_panel?.length > 0) {
+          let currentSection = '';
           document.getElementById('crypto-right-panel').innerHTML = d.right_panel.map((r, i) => {
             if (r.section) {
+              currentSection = r.section;
               return `<div class="crr-section-header">${r.section}</div>`;
             }
-            const isLast = i === d.right_panel.length - 1 || (d.right_panel[i+1] && d.right_panel[i+1].section);
+            // Determine color based on section
+            let valColor = colorMap.white;
+            let extraClass = '';
+            let dataAttr = '';
+
+            if (currentSection === 'Prices') {
+              // Keep color coding for Prices section
+              valColor = colorMap[r.color] || colorMap.white;
+            } else if (r.odds !== undefined) {
+              // Polymarket odds - use gradient coloring
+              valColor = getPolymarketColor(r.odds);
+              extraClass = ' polymarket-odds';
+              dataAttr = ` data-odds="${r.odds}"`;
+            }
+            // All other sections use white (default)
+
             return `<div class="crypto-right-row">
               <span class="crr-label">${r.label}</span>
-              <span class="crr-val" style="color:${colorMap[r.color] || colorMap.white}">${r.val}</span>
+              <span class="crr-val${extraClass}" style="color:${valColor}"${dataAttr}>${r.val}</span>
             </div>`;
           }).join('');
         }
@@ -1443,7 +1546,7 @@ Include 3-5 events per active day, 1-2 for quieter days. Keep descriptions under
       btn.classList.add('spinning');
       errorEl.style.display = 'none';
 
-      const dayLabel = currentPricingDay === 'friday' ? 'Fri' : 'Mon';
+      const dayLabel = currentPricingDay === 'friday' ? 'FRI CLOSE' : 'MON OPEN';
       const dayName = currentPricingDay === 'friday' ? 'Friday' : 'Monday';
       const weekReturnCalc = currentPricingDay === 'friday'
         ? 'calculate the percentage change from last Friday to this Friday'
@@ -1467,19 +1570,18 @@ Return ONLY valid JSON, no markdown:
       "price": "6,xxx",
       "weekly_return": "+/-x.x%",
       "monthly_return": "+/-x.x%",
-      "volatility": "Volatile|Ranging|Unpredictable",
-      "sentiment": "positive|negative|neutral|crypto",
-      "context": "short context line · max 8 words · e.g. '3 wks down · 2026 low'"
+      "volatility": "Ranging|Slight Volatility|Volatile|Extreme Volatility",
+      "sentiment": "positive|negative|neutral|crypto"
     },
-    { "key": "dow",      "name": "DOW (${dayLabel})",      "price": "...", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "...", "context": "..." },
-    { "key": "nasdaq",   "name": "NASDAQ (${dayLabel})",   "price": "...", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "...", "context": "..." },
-    { "key": "gold",     "name": "GOLD (${dayLabel})",     "price": "$x,xxx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "...", "context": "..." },
-    { "key": "silver",   "name": "SILVER (${dayLabel})",   "price": "$xx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "...", "context": "..." },
-    { "key": "bitcoin",  "name": "BITCOIN",        "price": "$xx,xxx", "weekly_return": "+/-x.x%", "monthly_return": "...", "volatility": "...", "sentiment": "crypto", "context": "..." },
-    { "key": "ethereum", "name": "ETHEREUM",       "price": "$x,xxx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "crypto", "context": "..." },
-    { "key": "dxy",      "name": "DXY (${dayLabel})",      "price": "xxx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "...", "context": "..." },
-    { "key": "oil",      "name": "WTI OIL (${dayLabel})",  "price": "$xxx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "...", "context": "..." },
-    { "key": "vix",      "name": "VIX (${dayLabel})",      "price": "xx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "negative|positive|neutral", "context": "fear regime · bears x%" }
+    { "key": "dow",      "name": "DOW (${dayLabel})",      "price": "...", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
+    { "key": "nasdaq",   "name": "NASDAQ (${dayLabel})",   "price": "...", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
+    { "key": "gold",     "name": "GOLD (${dayLabel})",     "price": "$x,xxx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
+    { "key": "silver",   "name": "SILVER (${dayLabel})",   "price": "$xx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
+    { "key": "bitcoin",  "name": "BITCOIN",        "price": "$xx,xxx", "weekly_return": "+/-x.x%", "monthly_return": "...", "volatility": "...", "sentiment": "crypto" },
+    { "key": "ethereum", "name": "ETHEREUM",       "price": "$x,xxx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "crypto" },
+    { "key": "dxy",      "name": "DXY (${dayLabel})",      "price": "xxx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
+    { "key": "oil",      "name": "WTI OIL (${dayLabel})",  "price": "$xxx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
+    { "key": "vix",      "name": "VIX (${dayLabel})",      "price": "xx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "negative|positive|neutral" }
   ]
 }
 
@@ -1491,9 +1593,10 @@ For weekly_return: ${weekReturnCalc}.
 For monthly_return: calculate the month-to-date return from the start of the current month (${new Date().toLocaleString('en-US', {month: 'long', year: 'numeric'})}) to the most recent close.
 
 For volatility classification, analyze recent price action and volatility metrics:
-- "Volatile": High ATR/volatility, large daily moves (>2% for equities, >5% for crypto), breaking out of ranges, trending strongly
 - "Ranging": Low ATR/volatility, price consolidating in tight range, Bollinger Bands contracting, choppy sideways action
-- "Unpredictable": Mixed signals, erratic price action without clear pattern, whipsaws, uncertain directional bias
+- "Slight Volatility": Modest daily moves, some directional bias but contained within normal ranges
+- "Volatile": High ATR/volatility, large daily moves (>2% for equities, >5% for crypto), breaking out of ranges, trending strongly
+- "Extreme Volatility": Very high ATR, massive daily swings, gap moves, circuit breakers, crisis-level price action
 
 Be precise with prices — use your best knowledge of recent closes. If uncertain, give a reasonable estimate and note it in context.`;
 
@@ -1529,9 +1632,19 @@ Be precise with prices — use your best knowledge of recent closes. If uncertai
               <div class="asset-box-weekly">${a.weekly_return} wk</div>
               <div class="asset-box-monthly">${a.monthly_return} mtd</div>
               <div class="asset-box-volatility">${a.volatility}</div>
-              <div class="asset-box-context">${a.context}</div>
             </div>`).join('');
         }
+
+        // Save to localStorage with timestamp
+        const now = new Date();
+        const pstTimestamp = now.toLocaleString('en-US', {
+          timeZone: 'America/Los_Angeles',
+          month: 'short', day: 'numeric', year: 'numeric',
+          hour: 'numeric', minute: '2-digit', hour12: true
+        }) + ' PST';
+        const savedData = { data: d, timestamp: pstTimestamp, pricingDay: currentPricingDay };
+        localStorage.setItem('ceruleus-intel', JSON.stringify(savedData));
+        document.getElementById('intel-last-updated').textContent = `Last updated: ${pstTimestamp}`;
 
       } catch(err) {
         errorEl.textContent = `Generation failed: ${err.message}`;
