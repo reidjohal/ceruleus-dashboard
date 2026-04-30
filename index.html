@@ -44,6 +44,7 @@
     .headline .accent-gold { color: #f5c35a; }
     .headline .accent-teal { color: #6ecfb5; }
     .headline .accent-red  { color: #e07070; }
+    .headline .accent-blue { color: #6e9ef5; }
     .subhead { font-size: 12px; color: rgba(255,255,255,0.36); line-height: 1.6; max-width: 900px; margin-bottom: 20px; }
     .gen-btn { display: block; width: 100%; margin-bottom: 14px; background: transparent; border: 0.5px solid rgba(255,255,255,0.12); border-radius: 0; -webkit-border-radius: 0; appearance: none; -webkit-appearance: none; color: rgba(255,255,255,0.4); font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.04em; padding: 9px; cursor: pointer; text-align: center; transition: border-color 0.15s, color 0.15s; outline: none; }
     .gen-btn:hover { border-color: rgba(255,255,255,0.28); color: rgba(255,255,255,0.75); }
@@ -297,9 +298,7 @@
     .page-next-arrow:hover svg, .page-prev-arrow:hover svg { stroke: #fff; }
 
     .cal-page-headline { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 700; line-height: 1.08; margin-bottom: 10px; color: #f0ede6; letter-spacing: -0.01em; }
-    .cal-page-headline .accent-gold { color: #f5c35a; }
-    .cal-page-headline .accent-teal { color: #6ecfb5; }
-    .cal-page-headline .accent-red  { color: #e07070; }
+    .cal-page-headline .accent-blue { color: #6e9ef5; }
 
 
     .cal-week-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 40px; }
@@ -391,8 +390,12 @@
       letter-spacing: 0.06em;
     }
     /* ── Crypto Intel page ── */
+    #page-crypto { position: relative; padding-bottom: 60px; }
+    #page-crypto .page-prev-arrow { position: relative; bottom: auto; left: 56px; margin-top: 20px; display: inline-block; }
     .crypto-page-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 56px 0; }
     .crypto-nav-left { display: flex; align-items: center; gap: 10px; }
+    .crypto-nav-right { display: flex; flex-direction: column; align-items: flex-end; }
+    .crypto-last-updated { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.2); letter-spacing: 0.03em; margin-top: 2px; }
     .crypto-page-pill { border: 0.5px solid #f5c35a; border-radius: 0; padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #f5c35a; text-transform: uppercase; }
     .crypto-refresh-icon { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
     .crypto-refresh-icon:hover svg { opacity: 1; }
@@ -403,8 +406,6 @@
     .crypto-content { padding: 20px 56px 0; }
     .crypto-headline { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 700; line-height: 1.08; margin-bottom: 10px; color: #f0ede6; letter-spacing: -0.01em; }
     .crypto-headline .accent-gold { color: #f5c35a; }
-    .crypto-headline .accent-teal { color: #6ecfb5; }
-    .crypto-headline .accent-red  { color: #e07070; }
     .crypto-subhead { font-size: 12px; color: rgba(255,255,255,0.36); line-height: 1.6; max-width: 100%; margin-bottom: 18px; }
     .crypto-date-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
     .crypto-date-label { font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.35); }
@@ -442,12 +443,7 @@
     .timeline-event:last-child { margin-bottom: 0; }
     .timeline-date { font-family: 'DM Mono', monospace; font-size: 9.5px; color: rgba(255,255,255,0.35); white-space: nowrap; padding-top: 2px; min-width: 54px; }
     .timeline-connector { display: flex; flex-direction: column; align-items: center; padding-top: 4px; }
-    .timeline-node { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .timeline-node.red    { background: #e07070; }
-    .timeline-node.teal   { background: #4dba87; }
-    .timeline-node.gold   { background: #f5c35a; }
-    .timeline-node.blue   { background: #6e9ef5; }
-    .timeline-node.purple { background: #a97de8; }
+    .timeline-node { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: rgba(255,255,255,0.6); }
     .timeline-line { width: 1px; background: rgba(255,255,255,0.08); flex: 1; min-height: 24px; }
     .timeline-text { font-size: 11.5px; line-height: 1.45; color: rgba(255,255,255,0.55); flex: 1; }
     .timeline-text strong { color: rgba(255,255,255,0.82); font-weight: 500; }
@@ -667,7 +663,7 @@
     <div class="crypto-page-nav">
       <div class="crypto-nav-left">
         <div class="crypto-page-pill">Crypto Intel · 3/3</div>
-        <button class="crypto-refresh-icon" id="crypto-refresh-btn" onclick="generateCrypto()" title="Refresh Crypto Intel">
+        <button class="crypto-refresh-icon" id="crypto-refresh-btn" onclick="refreshCryptoRight()" title="Refresh Crypto Intel">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 4v6h-6"></path>
             <path d="M1 20v-6h6"></path>
@@ -675,7 +671,10 @@
           </svg>
         </button>
       </div>
-      <div class="week-range" id="crypto-week-label"></div>
+      <div class="crypto-nav-right">
+        <div class="week-range" id="crypto-week-label"></div>
+        <div class="crypto-last-updated" id="crypto-last-updated"></div>
+      </div>
     </div>
 
     <div class="crypto-content">
@@ -690,7 +689,7 @@
       <div class="crypto-date-row">
         <span class="crypto-date-label">Since</span>
         <input type="date" class="crypto-date-input" id="crypto-date" value="2026-02-28" />
-        <button class="crypto-date-update" onclick="generateCrypto()">Update</button>
+        <button class="crypto-date-update" onclick="updateCryptoLeft()">Update</button>
       </div>
 
       <div class="error-banner" id="crypto-error"></div>
@@ -733,37 +732,37 @@
             <div id="crypto-timeline">
               <div class="timeline-event">
                 <div class="timeline-date">Feb 28</div>
-                <div class="timeline-connector"><div class="timeline-node neu"></div></div>
+                <div class="timeline-connector"><div class="timeline-node"></div></div>
                 <div class="timeline-text">BTC consolidates at $76K · Fear/Greed: 55 (neutral) · ETF flows pause after 3-week streak</div>
               </div>
               <div class="timeline-event">
                 <div class="timeline-date">Mar 7</div>
-                <div class="timeline-connector"><div class="timeline-node pos"></div></div>
+                <div class="timeline-connector"><div class="timeline-node"></div></div>
                 <div class="timeline-text">Jobs report miss (+142K vs 200K exp) · Fed pivot hopes surge · BTC breaks $82K resistance</div>
               </div>
               <div class="timeline-event">
                 <div class="timeline-date">Mar 14</div>
-                <div class="timeline-connector"><div class="timeline-node pos"></div></div>
+                <div class="timeline-connector"><div class="timeline-node"></div></div>
                 <div class="timeline-text">CPI prints 2.8% YoY (below consensus) · Risk-on rally · BTC ETF inflows hit $680M in single day</div>
               </div>
               <div class="timeline-event">
                 <div class="timeline-date">Mar 21</div>
-                <div class="timeline-connector"><div class="timeline-node pos"></div></div>
+                <div class="timeline-connector"><div class="timeline-node"></div></div>
                 <div class="timeline-text">MicroStrategy buys 12,000 BTC · MSTR premium expands to 2.8x NAV · Dominance hits 59%</div>
               </div>
               <div class="timeline-event">
                 <div class="timeline-date">Apr 2</div>
-                <div class="timeline-connector"><div class="timeline-node neg"></div></div>
+                <div class="timeline-connector"><div class="timeline-node"></div></div>
                 <div class="timeline-text">Iran strikes escalate · Oil spikes to $94 · Risk-off deleveraging · BTC dips to $84K</div>
               </div>
               <div class="timeline-event">
                 <div class="timeline-date">Apr 11</div>
-                <div class="timeline-connector"><div class="timeline-node pos"></div></div>
+                <div class="timeline-connector"><div class="timeline-node"></div></div>
                 <div class="timeline-text">Ceasefire talks advance · BTC recovers to $88K · ETH outperforms on Pectra upgrade hype</div>
               </div>
               <div class="timeline-event">
                 <div class="timeline-date">Apr 28</div>
-                <div class="timeline-connector"><div class="timeline-node pos"></div></div>
+                <div class="timeline-connector"><div class="timeline-node"></div></div>
                 <div class="timeline-text">BTC holds $90K · F&G: 67 (greed) · ETF flows +$2.4B cumulative · Alt season rotation begins</div>
               </div>
             </div>
@@ -839,8 +838,8 @@
 
       <div class="intel-assets-grid" id="intel-grid">
         <div class="asset-box neutral"><div class="asset-box-name">S&amp;P 500 (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
-        <div class="asset-box neutral"><div class="asset-box-name">DOW (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
         <div class="asset-box neutral"><div class="asset-box-name">NASDAQ (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
+        <div class="asset-box neutral"><div class="asset-box-name">DOW (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
         <div class="asset-box neutral"><div class="asset-box-name">GOLD (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
         <div class="asset-box neutral"><div class="asset-box-name">SILVER (FRI CLOSE)</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
         <div class="asset-box neutral"><div class="asset-box-name">BITCOIN</div><div class="asset-box-price" style="font-size:20px;color:rgba(255,255,255,0.15)">—</div><div class="asset-box-weekly" style="color:rgba(255,255,255,0.1)">—</div><div class="asset-box-monthly" style="color:rgba(255,255,255,0.08)">—</div><div class="asset-box-volatility" style="color:rgba(255,255,255,0.08)">—</div></div>
@@ -1056,31 +1055,26 @@
       try {
         const saved = localStorage.getItem('ceruleus-intel');
         if (!saved) return;
-        const { data: d, timestamp, pricingDay } = JSON.parse(saved);
+        const { data: d, timestamp } = JSON.parse(saved);
         if (!d) return;
 
-        // Update pricing day toggle to match saved state
-        if (pricingDay) {
-          currentPricingDay = pricingDay;
-          document.querySelectorAll('.intel-day-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.day === pricingDay);
-          });
-        }
+        // Store data for view switching
+        savedIntelData = d;
 
         // Render headline
         if (d.headline) {
-          const lines = d.headline.split('|').map(p =>
-            p.trim()
-             .replace(/\[gold\](.*?)\[\/gold\]/g, '<span class="accent-gold">$1</span>')
-             .replace(/\[teal\](.*?)\[\/teal\]/g, '<span class="accent-teal">$1</span>')
-             .replace(/\[red\](.*?)\[\/red\]/g,   '<span class="accent-red">$1</span>')
-          );
-          document.getElementById('intel-headline').innerHTML = lines.join('<br>');
+          const formatted = d.headline.trim()
+            .replace(/\[teal\](.*?)\[\/teal\]/gi, '<span class="accent-teal">$1</span>');
+          document.getElementById('intel-headline').innerHTML = formatted;
         }
         if (d.subhead) document.getElementById('intel-subhead').textContent = d.subhead;
 
-        // Render asset boxes
-        if (d.assets?.length === 10) {
+        // Render current view (default to friday)
+        if (d.friday_assets?.length === 10 && d.monday_assets?.length === 10) {
+          renderIntelView(d, currentPricingDay);
+        } else if (d.assets?.length === 10) {
+          // Legacy format support
+          const dayLabel = currentPricingDay === 'friday' ? 'FRI CLOSE' : 'MON OPEN';
           document.getElementById('intel-grid').innerHTML = d.assets.map(a => `
             <div class="asset-box ${a.sentiment}">
               <div class="asset-box-name">${a.name}</div>
@@ -1158,35 +1152,9 @@
 
     let chartsInitialised = false;
 
-    // Adjust page arrow positions based on content height
+    // Placeholder for page arrow adjustments (crypto page arrow is now in normal flow)
     function adjustPageArrows() {
-      const cryptoPage = document.getElementById('page-crypto');
-      if (!cryptoPage || !cryptoPage.classList.contains('active')) return;
-
-      const arrow = cryptoPage.querySelector('.page-prev-arrow');
-      if (!arrow) return;
-
-      const rightPanel = document.getElementById('crypto-right-panel');
-      if (!rightPanel) return;
-
-      const panelRect = rightPanel.getBoundingClientRect();
-      const panelBottom = panelRect.bottom; // Distance from top of viewport to bottom of panel
-      const viewportHeight = window.innerHeight;
-      const spacing = 40; // Desired spacing between panel bottom and arrow (in pixels)
-      const defaultArrowBottom = 20; // Default position when panel is short
-
-      // Calculate distance from viewport bottom to panel bottom
-      const distanceFromBottom = viewportHeight - panelBottom;
-
-      // If panel extends low enough that default arrow position would be too close
-      if (distanceFromBottom < (defaultArrowBottom + spacing + 30)) {
-        // Position arrow with proper spacing below the panel
-        const newBottom = distanceFromBottom - spacing;
-        arrow.style.bottom = Math.max(newBottom, 10) + 'px';
-      } else {
-        // Panel is short enough, use default position
-        arrow.style.bottom = defaultArrowBottom + 'px';
-      }
+      // Arrow positioning for crypto page is handled via CSS
     }
 
     function switchPage(pageKey) {
@@ -1219,11 +1187,11 @@
     // Adjust arrows on window resize
     window.addEventListener('resize', adjustPageArrows);
 
-    // ── Crypto Intel generation ──────────────────────────────────
-    async function generateCrypto() {
-      const btn = document.getElementById('crypto-refresh-btn');
+    // ── Crypto Intel generation (left side - date update) ──────────────────────────────────
+    async function updateCryptoLeft() {
       const errorEl = document.getElementById('crypto-error');
       const dateInput = document.getElementById('crypto-date');
+      const updateBtn = document.querySelector('.crypto-date-update');
       const sinceDate = dateInput.value;
 
       // Format date nicely for display
@@ -1232,15 +1200,15 @@
       const sinceFriendly = `${months[parseInt(m)-1]} ${parseInt(d)}, ${y}`;
       document.getElementById('timeline-since-label').textContent = sinceFriendly;
 
-      btn.disabled = true;
-      btn.classList.add('spinning');
+      updateBtn.disabled = true;
+      updateBtn.textContent = 'Updating...';
       errorEl.style.display = 'none';
 
-      const prompt = `You are a crypto and macro analyst. Generate a comprehensive crypto intelligence brief for the period from ${sinceFriendly} to today (${TRADING_WEEK}).
+      const prompt = `You are a crypto and macro analyst. Generate crypto intelligence data for the period from ${sinceFriendly} to today (${TRADING_WEEK}).
 
 Return ONLY valid JSON, no markdown:
 {
-  "headline": "2-line headline | split with pipe, max 12 words per line, use [gold]text[/gold] [teal]text[/teal] [red]text[/red] tags",
+  "headline": "Single line headline, max 12 words, use [gold]text[/gold] tags on key terms only, always lowercase",
   "subhead": "2-3 sentences covering BTC performance vs macro assets since ${sinceFriendly}. Include key relative performance facts.",
   "perf": [
     { "key": "btc",     "label": "BTC Since ${sinceFriendly}",  "val": "+/-X%", "sub": "$XX,XXX → $XX,XXX · brief context", "sentiment": "pos|neg|neu" },
@@ -1253,36 +1221,11 @@ Return ONLY valid JSON, no markdown:
   "fear_greed": { "val": "XX — Label", "sub": "vs X on ${sinceFriendly} · trend direction", "tier": "extreme|fear|neutral|greed" },
   "dominance":  { "val": "XX.X%", "sub": "vs XX.X% on ${sinceFriendly} · rising|falling" },
   "timeline": [
-    { "date": "Mon DD", "text": "Event description. Market impact.", "tier": "red|teal|gold|blue|purple" }
-  ],
-  "right_panel": [
-    { "section": "Prices" },
-    { "label": "From ATH",            "val": "-XX%",              "color": "red" },
-    { "label": "From Yearly Low",     "val": "+XX%",              "color": "teal" },
-    { "section": "Strategy (MSTR)" },
-    { "label": "Bought This Week",    "val": "X,XXX BTC" },
-    { "label": "Total BTC Holdings",  "val": "XXX,XXX BTC" },
-    { "label": "Avg Buy Price",       "val": "$XX,XXX" },
-    { "label": "mNAV",                "val": "X.Xx" },
-    { "section": "Stretch (STRC)" },
-    { "label": "Current Price",       "val": "$XX.XX" },
-    { "label": "Annual Rate",         "val": "XX.X%" },
-    { "label": "Volume (Daily)",      "val": "$XXm" },
-    { "label": "Volume (Weekly)",     "val": "$XXXm" },
-    { "section": "Polymarket · BTC" },
-    { "label": "$100K or $70K First?","val": "$100K · XX%",       "odds": 78 },
-    { "label": "April Close Price",   "val": "$XXK-$XXK · XX%" },
-    { "label": "New ATH in 2026",     "val": "XX%",               "odds": 64 },
-    { "label": "Above $95K by June 1","val": "XX%",               "odds": 52 }
+    { "date": "Mon DD", "text": "Event description. Market impact." }
   ]
 }
 
-For the right panel:
-- Prices section: "From ATH" is BTC's percentage decline from all-time high (~$109K), use color "red". "From Yearly Low" is percentage gain from 2024/2025 low, use color "teal".
-- Strategy (MSTR): bought this week, total holdings, avg buy price, mNAV (multiple of NAV). No color field needed.
-- Stretch (STRC): current price, annual yield rate, daily and weekly volume. No color field needed.
-- Polymarket · BTC: Include "odds" field (number 0-100) for percentage bets. Format "$100K or $70K First?" as "$100K · XX%" or "$70K · XX%" based on which is favored. "April Close Price" format as "$XXK-$XXK · XX%". Other odds just "XX%".
-For timeline: include 6-10 major events chronologically from ${sinceFriendly} to today. Cover geopolitical events (Iran war, Hormuz), Fed decisions, BTC price milestones, ETF flow records, macro shocks, MSTR purchases. Be specific with dates and prices.`;
+For timeline: include 6-10 major events chronologically from ${sinceFriendly} to today. Use "Mon DD" format for dates where Mon is the 3-letter month abbreviation (e.g., "Feb 28", "Mar 15", "Apr 02"). Cover geopolitical events (Iran war, Hormuz), Fed decisions, BTC price milestones, ETF flow records, macro shocks, MSTR purchases. Be specific with dates and prices.`;
 
       try {
         const resp = await fetch(WORKER_URL, {
@@ -1297,13 +1240,9 @@ For timeline: include 6-10 major events chronologically from ${sinceFriendly} to
 
         // Headline
         if (d.headline) {
-          const lines = d.headline.split('|').map(p =>
-            p.trim()
-             .replace(/\[gold\](.*?)\[\/gold\]/g, '<span class="accent-gold">$1</span>')
-             .replace(/\[teal\](.*?)\[\/teal\]/g, '<span class="accent-teal">$1</span>')
-             .replace(/\[red\](.*?)\[\/red\]/g,   '<span class="accent-red">$1</span>')
-          );
-          document.getElementById('crypto-headline').innerHTML = lines.join('<br>');
+          const formatted = d.headline.trim()
+            .replace(/\[gold\](.*?)\[\/gold\]/gi, '<span class="accent-gold">$1</span>');
+          document.getElementById('crypto-headline').innerHTML = formatted;
         }
         if (d.subhead) document.getElementById('crypto-subhead').textContent = d.subhead;
 
@@ -1337,12 +1276,77 @@ For timeline: include 6-10 major events chronologically from ${sinceFriendly} to
             <div class="timeline-event">
               <div class="timeline-date">${ev.date}</div>
               <div class="timeline-connector">
-                <div class="timeline-node ${ev.tier}"></div>
+                <div class="timeline-node"></div>
                 ${i < d.timeline.length - 1 ? '<div class="timeline-line"></div>' : ''}
               </div>
               <div class="timeline-text">${ev.text}</div>
             </div>`).join('');
         }
+
+        // Adjust arrow position after content update
+        setTimeout(adjustPageArrows, 100);
+
+      } catch(err) {
+        errorEl.textContent = `Generation failed: ${err.message}`;
+        errorEl.style.display = 'block';
+      } finally {
+        updateBtn.disabled = false;
+        updateBtn.textContent = 'Update';
+        setTimeout(adjustPageArrows, 100);
+      }
+    }
+
+    // ── Crypto Intel generation (right side - refresh button) ──────────────────────────────────
+    async function refreshCryptoRight() {
+      const btn = document.getElementById('crypto-refresh-btn');
+      const errorEl = document.getElementById('crypto-error');
+
+      btn.disabled = true;
+      btn.classList.add('spinning');
+      errorEl.style.display = 'none';
+
+      const prompt = `You are a crypto and macro analyst. Generate current market data for the right panel of a crypto intelligence dashboard.
+
+Return ONLY valid JSON, no markdown:
+{
+  "right_panel": [
+    { "section": "Prices" },
+    { "label": "From ATH",            "val": "-XX%",              "color": "red" },
+    { "label": "From Yearly Low",     "val": "+XX%",              "color": "teal" },
+    { "section": "Strategy (MSTR)" },
+    { "label": "Bought This Week",    "val": "X,XXX BTC" },
+    { "label": "Total BTC Holdings",  "val": "XXX,XXX BTC" },
+    { "label": "Avg Buy Price",       "val": "$XX,XXX" },
+    { "label": "mNAV",                "val": "X.Xx" },
+    { "section": "Stretch (STRC)" },
+    { "label": "Current Price",       "val": "$XX.XX" },
+    { "label": "Annual Rate",         "val": "XX.X%" },
+    { "label": "Volume (Daily)",      "val": "$XXm" },
+    { "label": "Volume (Weekly)",     "val": "$XXXm" },
+    { "section": "Polymarket · BTC" },
+    { "label": "$100K or $70K First?","val": "$100K · XX%",       "odds": 78 },
+    { "label": "April Close Price",   "val": "$XXK-$XXK · XX%" },
+    { "label": "New ATH in 2026",     "val": "XX%",               "odds": 64 },
+    { "label": "Above $95K by June 1","val": "XX%",               "odds": 52 }
+  ]
+}
+
+Instructions:
+- Prices section: "From ATH" is BTC's percentage decline from all-time high (~$109K), use color "red". "From Yearly Low" is percentage gain from 2024/2025 low, use color "teal".
+- Strategy (MSTR): bought this week, total holdings, avg buy price, mNAV (multiple of NAV). No color field needed.
+- Stretch (STRC): current price, annual yield rate, daily and weekly volume. No color field needed.
+- Polymarket · BTC: Include "odds" field (number 0-100) for percentage bets. Format "$100K or $70K First?" as "$100K · XX%" or "$70K · XX%" based on which is favored. "April Close Price" format as "$XXK-$XXK · XX%". Other odds just "XX%".`;
+
+      try {
+        const resp = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+        if (!resp.ok) throw new Error(`Worker responded ${resp.status}`);
+        const data = await resp.json();
+        const raw = (data.text || '').replace(/```json|```/g, '').trim();
+        const d = JSON.parse(raw);
 
         // Right panel
         const colorMap = { teal: '#4dba87', red: '#e07070', gold: '#f5c35a', blue: '#6e9ef5', orange: '#f0a040', white: 'rgba(255,255,255,0.75)' };
@@ -1376,6 +1380,12 @@ For timeline: include 6-10 major events chronologically from ${sinceFriendly} to
           }).join('');
         }
 
+        // Update last refresh timestamp
+        const now = new Date();
+        const options = { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: '2-digit', hour12: true };
+        const pstTimestamp = now.toLocaleString('en-US', options).toLowerCase() + ' PT';
+        document.getElementById('crypto-last-updated').textContent = `Last refresh: ${pstTimestamp}`;
+
         // Adjust arrow position after content update
         setTimeout(adjustPageArrows, 100);
 
@@ -1385,7 +1395,6 @@ For timeline: include 6-10 major events chronologically from ${sinceFriendly} to
       } finally {
         btn.disabled = false;
         btn.classList.remove('spinning');
-        // Ensure arrow is adjusted even on error
         setTimeout(adjustPageArrows, 100);
       }
     }
@@ -1431,7 +1440,7 @@ For each event assign:
 
 Return ONLY valid JSON, no markdown:
 {
-  "headline": "2-line headline | split with pipe, max 12 words per line, use [gold], [teal], [red] color tags",
+  "headline": "Single line headline, max 12 words, use [blue]text[/blue] tags on key terms only, always lowercase",
   "subhead": "2-3 sentence summary of the week's dominant catalysts, under 300 chars",
   "days": [
     {
@@ -1478,13 +1487,9 @@ Include 3-5 events per active day, 1-2 for quieter days. Keep descriptions under
 
         // Render headline
         if (d.headline) {
-          const lines = d.headline.split('|').map(p =>
-            p.trim()
-             .replace(/\[gold\](.*?)\[\/gold\]/g, '<span class="accent-gold">$1</span>')
-             .replace(/\[teal\](.*?)\[\/teal\]/g, '<span class="accent-teal">$1</span>')
-             .replace(/\[red\](.*?)\[\/red\]/g,   '<span class="accent-red">$1</span>')
-          );
-          document.getElementById('cal-headline').innerHTML = lines.join('<br>');
+          const formatted = d.headline.trim()
+            .replace(/\[blue\](.*?)\[\/blue\]/gi, '<span class="accent-blue">$1</span>');
+          document.getElementById('cal-headline').innerHTML = formatted;
         }
 
         // Render day columns
@@ -1525,18 +1530,44 @@ Include 3-5 events per active day, 1-2 for quieter days. Keep descriptions under
     }
 
     // ── Market Pricing generation ──────────────────────────────────
+    let savedIntelData = null; // Store fetched data for view switching
+
     function switchPricingDay(day) {
       currentPricingDay = day;
       // Update button states
       document.querySelectorAll('.intel-day-btn').forEach(btn => {
-        if (btn.dataset.day === day) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
+        btn.classList.toggle('active', btn.dataset.day === day);
       });
-      // Regenerate with new day
-      generateIntel();
+      // Re-render with stored data (don't regenerate)
+      if (savedIntelData) {
+        renderIntelView(savedIntelData, day);
+      }
+    }
+
+    function renderIntelView(d, day) {
+      const dayLabel = day === 'friday' ? 'FRI CLOSE' : 'MON OPEN';
+
+      // Render asset boxes with correct view
+      if (d.friday_assets?.length === 10 && d.monday_assets?.length === 10) {
+        const assets = day === 'friday' ? d.friday_assets : d.monday_assets;
+        // Order: S&P, NASDAQ, DOW, GOLD, SILVER, BTC, ETH, DXY, OIL, VIX
+        const orderedKeys = ['sp500', 'nasdaq', 'dow', 'gold', 'silver', 'bitcoin', 'ethereum', 'dxy', 'oil', 'vix'];
+        const orderedAssets = orderedKeys.map(key => assets.find(a => a.key === key)).filter(Boolean);
+
+        document.getElementById('intel-grid').innerHTML = orderedAssets.map(a => {
+          const displayName = (a.key === 'bitcoin' || a.key === 'ethereum')
+            ? a.name
+            : `${a.name.split(' (')[0]} (${dayLabel})`;
+          return `
+            <div class="asset-box ${a.sentiment}">
+              <div class="asset-box-name">${displayName}</div>
+              <div class="asset-box-price">${a.price}</div>
+              <div class="asset-box-weekly">${a.weekly_return} wk</div>
+              <div class="asset-box-monthly">${a.monthly_return} mtd</div>
+              <div class="asset-box-volatility">${a.volatility}</div>
+            </div>`;
+        }).join('');
+      }
     }
 
     async function generateIntel() {
@@ -1546,59 +1577,76 @@ Include 3-5 events per active day, 1-2 for quieter days. Keep descriptions under
       btn.classList.add('spinning');
       errorEl.style.display = 'none';
 
-      const dayLabel = currentPricingDay === 'friday' ? 'FRI CLOSE' : 'MON OPEN';
-      const dayName = currentPricingDay === 'friday' ? 'Friday' : 'Monday';
-      const weekReturnCalc = currentPricingDay === 'friday'
-        ? 'calculate the percentage change from last Friday to this Friday'
-        : 'calculate the percentage change from last Monday to this Monday (Monday close of current week)';
+      const currentMonth = new Date().toLocaleString('en-US', {month: 'long', year: 'numeric'});
 
       const prompt = `You are a macro trading analyst. Generate a market pricing brief for the week of ${TRADING_WEEK}.
 
-Search your knowledge for the most recent ${dayName} closing prices and performance for these 10 assets:
-S&P 500, DOW Jones, NASDAQ, Gold, Silver, Bitcoin, Ethereum, DXY (US Dollar Index), WTI Crude Oil, VIX.
+Search your knowledge for the most recent Friday closing prices AND Monday prices for these 10 assets:
+S&P 500, NASDAQ, DOW Jones, Gold, Silver, Bitcoin, Ethereum, DXY (US Dollar Index), WTI Crude Oil, VIX.
 
 Also consider current macro context: Iran/Hormuz war situation, Fed policy path, tariff developments, any major geopolitical events.
 
 Return ONLY valid JSON, no markdown:
 {
-  "headline": "2-line headline split with |, max 12 words per line, use [gold], [teal], [red] color tags on key terms",
+  "headline": "Single line headline, max 12 words, use [teal]text[/teal] tags on key terms only, always lowercase",
   "subhead": "2-3 sentence context paragraph under 280 chars covering the dominant macro themes this week",
-  "assets": [
+  "friday_assets": [
     {
       "key": "sp500",
-      "name": "S&P 500 (${dayLabel})",
+      "name": "S&P 500",
       "price": "6,xxx",
       "weekly_return": "+/-x.x%",
       "monthly_return": "+/-x.x%",
       "volatility": "Ranging|Slight Volatility|Volatile|Extreme Volatility",
-      "sentiment": "positive|negative|neutral|crypto"
+      "sentiment": "positive|negative|neutral"
     },
-    { "key": "dow",      "name": "DOW (${dayLabel})",      "price": "...", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
-    { "key": "nasdaq",   "name": "NASDAQ (${dayLabel})",   "price": "...", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
-    { "key": "gold",     "name": "GOLD (${dayLabel})",     "price": "$x,xxx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
-    { "key": "silver",   "name": "SILVER (${dayLabel})",   "price": "$xx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
-    { "key": "bitcoin",  "name": "BITCOIN",        "price": "$xx,xxx", "weekly_return": "+/-x.x%", "monthly_return": "...", "volatility": "...", "sentiment": "crypto" },
-    { "key": "ethereum", "name": "ETHEREUM",       "price": "$x,xxx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "crypto" },
-    { "key": "dxy",      "name": "DXY (${dayLabel})",      "price": "xxx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
-    { "key": "oil",      "name": "WTI OIL (${dayLabel})",  "price": "$xxx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
-    { "key": "vix",      "name": "VIX (${dayLabel})",      "price": "xx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "negative|positive|neutral" }
+    { "key": "nasdaq",   "name": "NASDAQ",   "price": "...", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
+    { "key": "dow",      "name": "DOW",      "price": "...", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
+    { "key": "gold",     "name": "GOLD",     "price": "$x,xxx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
+    { "key": "silver",   "name": "SILVER",   "price": "$xx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
+    { "key": "bitcoin",  "name": "BITCOIN",  "price": "$xx,xxx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "crypto" },
+    { "key": "ethereum", "name": "ETHEREUM", "price": "$x,xxx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "crypto" },
+    { "key": "dxy",      "name": "DXY",      "price": "xxx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
+    { "key": "oil",      "name": "WTI OIL",  "price": "$xx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." },
+    { "key": "vix",      "name": "VIX",      "price": "xx.xx", "weekly_return": "...", "monthly_return": "...", "volatility": "...", "sentiment": "..." }
+  ],
+  "monday_assets": [
+    {
+      "key": "sp500",
+      "name": "S&P 500",
+      "price": "SAME AS FRIDAY (markets closed over weekend)",
+      "weekly_return": "+/-x.x% (current week gain from Monday open to now)",
+      "monthly_return": "+/-x.x% (MTD through Monday)",
+      "volatility": "...",
+      "sentiment": "..."
+    },
+    { "key": "nasdaq",   "name": "NASDAQ",   "price": "SAME AS FRIDAY", "weekly_return": "current week", "monthly_return": "MTD", "volatility": "...", "sentiment": "..." },
+    { "key": "dow",      "name": "DOW",      "price": "SAME AS FRIDAY", "weekly_return": "current week", "monthly_return": "MTD", "volatility": "...", "sentiment": "..." },
+    { "key": "gold",     "name": "GOLD",     "price": "SAME AS FRIDAY", "weekly_return": "current week", "monthly_return": "MTD", "volatility": "...", "sentiment": "..." },
+    { "key": "silver",   "name": "SILVER",   "price": "SAME AS FRIDAY", "weekly_return": "current week", "monthly_return": "MTD", "volatility": "...", "sentiment": "..." },
+    { "key": "bitcoin",  "name": "BITCOIN",  "price": "$xx,xxx (UPDATED - trades 24/7)", "weekly_return": "current week", "monthly_return": "MTD", "volatility": "...", "sentiment": "crypto" },
+    { "key": "ethereum", "name": "ETHEREUM", "price": "$x,xxx (UPDATED - trades 24/7)", "weekly_return": "current week", "monthly_return": "MTD", "volatility": "...", "sentiment": "crypto" },
+    { "key": "dxy",      "name": "DXY",      "price": "SAME AS FRIDAY", "weekly_return": "current week", "monthly_return": "MTD", "volatility": "...", "sentiment": "..." },
+    { "key": "oil",      "name": "WTI OIL",  "price": "SAME AS FRIDAY", "weekly_return": "current week", "monthly_return": "MTD", "volatility": "...", "sentiment": "..." },
+    { "key": "vix",      "name": "VIX",      "price": "SAME AS FRIDAY", "weekly_return": "current week", "monthly_return": "MTD", "volatility": "...", "sentiment": "..." }
   ]
 }
 
-For sentiment: use "positive" if weekly_return was positive, "negative" if negative, "crypto" for BTC/ETH always.
-For VIX: "negative" if VIX is elevated/rising (bad for markets), "positive" if VIX is low/falling.
-For DXY: "negative" if dollar strengthening (bad for risk assets), "positive" if weakening.
+IMPORTANT RULES:
+1. friday_assets: Use latest Friday closing prices. weekly_return = prior week (last Fri to this Fri). monthly_return = MTD through Friday.
+2. monday_assets:
+   - For S&P, NASDAQ, DOW, GOLD, SILVER, DXY, WTI OIL, VIX: Use SAME price as Friday (markets closed weekends)
+   - For BITCOIN and ETHEREUM ONLY: Use current/Monday price (they trade 24/7)
+   - weekly_return = current week gain (from this Monday open to now)
+   - monthly_return = MTD through Monday
 
-For weekly_return: ${weekReturnCalc}.
-For monthly_return: calculate the month-to-date return from the start of the current month (${new Date().toLocaleString('en-US', {month: 'long', year: 'numeric'})}) to the most recent close.
+For sentiment: use "positive" if weekly_return positive, "negative" if negative, "crypto" for BTC/ETH always.
+For VIX: "negative" if elevated/rising, "positive" if low/falling.
+For DXY: "negative" if strengthening, "positive" if weakening.
 
-For volatility classification, analyze recent price action and volatility metrics:
-- "Ranging": Low ATR/volatility, price consolidating in tight range, Bollinger Bands contracting, choppy sideways action
-- "Slight Volatility": Modest daily moves, some directional bias but contained within normal ranges
-- "Volatile": High ATR/volatility, large daily moves (>2% for equities, >5% for crypto), breaking out of ranges, trending strongly
-- "Extreme Volatility": Very high ATR, massive daily swings, gap moves, circuit breakers, crisis-level price action
+For volatility: Ranging (tight consolidation) | Slight Volatility (modest moves) | Volatile (large daily moves >2% equities, >5% crypto) | Extreme Volatility (crisis-level)
 
-Be precise with prices — use your best knowledge of recent closes. If uncertain, give a reasonable estimate and note it in context.`;
+Be precise with prices — use your best knowledge of recent closes.`;
 
       try {
         const resp = await fetch(WORKER_URL, {
@@ -1611,29 +1659,19 @@ Be precise with prices — use your best knowledge of recent closes. If uncertai
         const raw = (data.text || '').replace(/```json|```/g, '').trim();
         const d = JSON.parse(raw);
 
+        // Store data for view switching
+        savedIntelData = d;
+
         // Render headline
         if (d.headline) {
-          const lines = d.headline.split('|').map(p =>
-            p.trim()
-             .replace(/\[gold\](.*?)\[\/gold\]/g, '<span class="accent-gold">$1</span>')
-             .replace(/\[teal\](.*?)\[\/teal\]/g, '<span class="accent-teal">$1</span>')
-             .replace(/\[red\](.*?)\[\/red\]/g,   '<span class="accent-red">$1</span>')
-          );
-          document.getElementById('intel-headline').innerHTML = lines.join('<br>');
+          const formatted = d.headline.trim()
+            .replace(/\[teal\](.*?)\[\/teal\]/gi, '<span class="accent-teal">$1</span>');
+          document.getElementById('intel-headline').innerHTML = formatted;
         }
         if (d.subhead) document.getElementById('intel-subhead').textContent = d.subhead;
 
-        // Render asset boxes
-        if (d.assets?.length === 10) {
-          document.getElementById('intel-grid').innerHTML = d.assets.map(a => `
-            <div class="asset-box ${a.sentiment}">
-              <div class="asset-box-name">${a.name}</div>
-              <div class="asset-box-price">${a.price}</div>
-              <div class="asset-box-weekly">${a.weekly_return} wk</div>
-              <div class="asset-box-monthly">${a.monthly_return} mtd</div>
-              <div class="asset-box-volatility">${a.volatility}</div>
-            </div>`).join('');
-        }
+        // Render current view
+        renderIntelView(d, currentPricingDay);
 
         // Save to localStorage with timestamp
         const now = new Date();
@@ -1642,7 +1680,7 @@ Be precise with prices — use your best knowledge of recent closes. If uncertai
           month: 'short', day: 'numeric', year: 'numeric',
           hour: 'numeric', minute: '2-digit', hour12: true
         }) + ' PST';
-        const savedData = { data: d, timestamp: pstTimestamp, pricingDay: currentPricingDay };
+        const savedData = { data: d, timestamp: pstTimestamp };
         localStorage.setItem('ceruleus-intel', JSON.stringify(savedData));
         document.getElementById('intel-last-updated').textContent = `Last updated: ${pstTimestamp}`;
 
@@ -1955,13 +1993,11 @@ Be precise with prices — use your best knowledge of recent closes. If uncertai
     }
 
     function renderHeadline(raw) {
-      const lines = raw.split('|').map(p =>
-        p.trim()
-         .replace(/\[gold\](.*?)\[\/gold\]/g, '<span class="accent-gold">$1</span>')
-         .replace(/\[teal\](.*?)\[\/teal\]/g, '<span class="accent-teal">$1</span>')
-         .replace(/\[red\](.*?)\[\/red\]/g,   '<span class="accent-red">$1</span>')
-      );
-      document.getElementById('headline').innerHTML = lines.join('<br>');
+      const formatted = raw.trim()
+        .replace(/\[gold\](.*?)\[\/gold\]/gi, '<span class="accent-gold">$1</span>')
+        .replace(/\[teal\](.*?)\[\/teal\]/gi, '<span class="accent-teal">$1</span>')
+        .replace(/\[red\](.*?)\[\/red\]/gi,   '<span class="accent-red">$1</span>');
+      document.getElementById('headline').innerHTML = formatted;
     }
 
     async function generateScenarios() {
@@ -1979,7 +2015,7 @@ Context: Week of ${TRADING_WEEK}. Current macro backdrop: monitor Iran/Hormuz si
 
 Return ONLY valid JSON, no markdown. Probabilities must NOT include a ~ symbol:
 {
-  "headline": "2-line headline split with |, max 10 words per line, tag key terms like [gold]text[/gold] or [teal]text[/teal] or [red]text[/red]",
+  "headline": "Single line headline, max 10 words, use [gold]text[/gold] [teal]text[/teal] [red]text[/red] tags on key terms, always lowercase",
   "subhead": "1-2 sentence context summary under 220 chars",
   "scenarios": [
     {"type":"bull","title":"4-6 words","prob":"X%","trigger":"trigger condition max 10 words","trigger_sub":"secondary detail max 10 words","desc":"2-3 sentence narrative","sp":"range","btc":"range","oil":"range"},
