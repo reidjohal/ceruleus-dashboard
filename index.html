@@ -9,10 +9,10 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #0d0f14; color: #e8e6e0; font-family: 'Space Grotesk', sans-serif; min-height: 100vh; }
-    .rainbow-bar { height: 3px; background: linear-gradient(90deg, #5b8dee, #6ecfb5, #f5c35a, #e07c6e, #b07cf5, #5b8dee); }
+    .rainbow-bar { height: 5px; background: linear-gradient(90deg, #5b8dee, #6ecfb5, #f5c35a, #e07c6e, #b07cf5, #5b8dee); }
 
     /* ── Site Nav ── */
-    .site-nav { display: flex; justify-content: space-between; align-items: center; padding: 0 28px; height: 44px; border-bottom: 0.5px solid rgba(255,255,255,0.07); }
+    .site-nav { display: flex; justify-content: space-between; align-items: center; padding: 0 56px; height: 44px; border-bottom: 0.5px solid rgba(255,255,255,0.07); }
     .site-nav-left { display: flex; align-items: center; }
     .site-logo { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: rgba(255,255,255,0.5); text-transform: uppercase; }
     .site-nav-right { display: flex; align-items: center; }
@@ -35,11 +35,11 @@
     .page.active { display: block; }
 
     /* ── News page ── */
-    .dashboard-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 28px 0; }
+    .dashboard-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 56px 0; }
     .nav-pill { border: 0.5px solid rgba(255,255,255,0.2); border-radius: 0; padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); text-transform: uppercase; }
     .week-range { font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.3); letter-spacing: 0.05em; }
     .intel-last-updated { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.2); letter-spacing: 0.03em; margin-top: 2px; }
-    .main-content { padding: 20px 28px 0; }
+    .main-content { padding: 20px 56px 0; }
     .headline { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 700; line-height: 1.08; margin-bottom: 10px; color: #f0ede6; letter-spacing: -0.01em; }
     .headline .accent-gold { color: #f5c35a; }
     .headline .accent-teal { color: #6ecfb5; }
@@ -234,7 +234,7 @@
       letter-spacing: 0.02em;
     }
 
-    .data-content { padding: 24px 28px 0; }
+    .data-content { padding: 24px 56px 0; }
     .data-page-header { margin-bottom: 24px; }
     .data-page-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: #f0ede6; margin-bottom: 4px; }
     .data-page-sub { font-size: 11px; color: rgba(255,255,255,0.28); font-family: 'DM Mono', monospace; letter-spacing: 0.06em; }
@@ -454,7 +454,7 @@
     .crr-val.polymarket-odds { font-weight: 600; }
     .crr-section-header { padding: 8px 18px 6px; background: rgba(255,255,255,0.03); border-bottom: 0.5px solid rgba(255,255,255,0.06); font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.22); }
 
-    .footer-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 28px 14px; margin-top: 16px; }
+    .footer-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 56px 14px; margin-top: 16px; }
     .footer-handle { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.18); letter-spacing: 0.08em; }
     .footer-tag    { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.18); letter-spacing: 0.08em; text-transform: uppercase; }
   </style>
@@ -491,7 +491,10 @@
   <div class="page" id="page-news">
     <div class="dashboard-nav">
       <div class="nav-pill">Scenarios + Calendar + Drivers · 1/1</div>
-      <div class="week-range" id="week-label"></div>
+      <div style="text-align:right">
+        <div class="week-range" id="week-label"></div>
+        <div class="intel-last-updated" id="scenarios-last-updated"></div>
+      </div>
     </div>
     <div class="main-content">
       <div class="headline" id="headline">
@@ -616,7 +619,10 @@
           </svg>
         </button>
       </div>
-      <div class="week-range" id="cal-week-label"></div>
+      <div style="text-align:right">
+        <div class="week-range" id="cal-week-label"></div>
+        <div class="intel-last-updated" id="cal-last-updated"></div>
+      </div>
     </div>
 
     <div class="cal-page-content">
@@ -1094,6 +1100,103 @@
       }
     })();
 
+    // Load saved scenarios (Weekly Intel) from localStorage
+    (function loadSavedScenarios() {
+      try {
+        const saved = localStorage.getItem('ceruleus-scenarios');
+        if (!saved) return;
+        const { html, timestamp } = JSON.parse(saved);
+        if (!html) return;
+
+        // Restore all cached HTML sections
+        if (html.headline) document.getElementById('headline').innerHTML = html.headline;
+        if (html.subhead) document.getElementById('subhead').textContent = html.subhead;
+        if (html.scenarios) document.getElementById('scenarios-grid').innerHTML = html.scenarios;
+        if (html.equityDrivers) document.getElementById('equity-drivers').innerHTML = html.equityDrivers;
+        if (html.btcDrivers) document.getElementById('btc-drivers').innerHTML = html.btcDrivers;
+
+        // Show last updated timestamp
+        if (timestamp) {
+          document.getElementById('scenarios-last-updated').textContent = `Last updated: ${timestamp}`;
+        }
+      } catch(e) {
+        console.warn('Failed to load saved scenarios:', e);
+      }
+    })();
+
+    // Load saved calendar from localStorage
+    (function loadSavedCalendar() {
+      try {
+        const saved = localStorage.getItem('ceruleus-calendar');
+        if (!saved) return;
+        const { html, timestamp } = JSON.parse(saved);
+        if (!html) return;
+
+        // Restore cached HTML
+        if (html.headline) document.getElementById('cal-headline').innerHTML = html.headline;
+        if (html.grid) document.getElementById('cal-week-grid').innerHTML = html.grid;
+
+        // Show last updated timestamp
+        if (timestamp) {
+          document.getElementById('cal-last-updated').textContent = `Last updated: ${timestamp}`;
+        }
+      } catch(e) {
+        console.warn('Failed to load saved calendar:', e);
+      }
+    })();
+
+    // Load saved crypto intel from localStorage
+    (function loadSavedCrypto() {
+      try {
+        const saved = localStorage.getItem('ceruleus-crypto');
+        if (!saved) return;
+        const { html, timestamp } = JSON.parse(saved);
+        if (!html) return;
+
+        // Restore cached HTML (left side)
+        if (html.headline) document.getElementById('crypto-headline').innerHTML = html.headline;
+        if (html.subhead) document.getElementById('crypto-subhead').textContent = html.subhead;
+        if (html.perfGrid) document.getElementById('crypto-perf-grid').innerHTML = html.perfGrid;
+        if (html.fgVal) {
+          const fgEl = document.getElementById('c-fg-val');
+          fgEl.textContent = html.fgVal;
+          if (html.fgClass) fgEl.className = html.fgClass;
+        }
+        if (html.fgSub) document.getElementById('c-fg-sub').textContent = html.fgSub;
+        if (html.domVal) document.getElementById('c-dom-val').textContent = html.domVal;
+        if (html.domSub) document.getElementById('c-dom-sub').textContent = html.domSub;
+        if (html.timeline) document.getElementById('crypto-timeline').innerHTML = html.timeline;
+        if (html.sinceLabel) document.getElementById('timeline-since-label').textContent = html.sinceLabel;
+
+        // Show last updated timestamp
+        if (timestamp) {
+          document.getElementById('crypto-last-updated').textContent = `Last updated: ${timestamp}`;
+        }
+      } catch(e) {
+        console.warn('Failed to load saved crypto:', e);
+      }
+    })();
+
+    // Load saved crypto right panel from localStorage
+    (function loadSavedCryptoRight() {
+      try {
+        const saved = localStorage.getItem('ceruleus-crypto-right');
+        if (!saved) return;
+        const { html, timestamp } = JSON.parse(saved);
+        if (!html) return;
+
+        // Restore cached HTML (right side)
+        if (html.rightPanel) document.getElementById('crypto-right-panel').innerHTML = html.rightPanel;
+
+        // Update last updated timestamp (shared with left side display)
+        if (timestamp && !localStorage.getItem('ceruleus-crypto')) {
+          document.getElementById('crypto-last-updated').textContent = `Last updated: ${timestamp}`;
+        }
+      } catch(e) {
+        console.warn('Failed to load saved crypto right:', e);
+      }
+    })();
+
     // Set placeholder day headers with actual dates
     (function setCalPlaceholders() {
       const now = new Date();
@@ -1204,7 +1307,37 @@
       updateBtn.textContent = 'Updating...';
       errorEl.style.display = 'none';
 
+      // Fetch live data first
+      let liveData = {};
+      try {
+        const liveResp = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fetchCryptoData: { sinceDate } })
+        });
+        liveData = await liveResp.json();
+      } catch(e) { console.warn('Live data fetch failed:', e); }
+      // Format live values for prompt injection
+      const btcCurrent   = liveData.btc_price ? `${liveData.btc_price.toLocaleString()}` : 'unknown';
+      const ethCurrent   = liveData.eth_price ? `${liveData.eth_price.toLocaleString()}` : 'unknown';
+      const btcSincePct  = liveData.btc_since_pct ? `${liveData.btc_since_pct > 0 ? '+' : ''}${liveData.btc_since_pct}%` : 'unknown';
+      const ethSincePct  = liveData.eth_since_pct ? `${liveData.eth_since_pct > 0 ? '+' : ''}${liveData.eth_since_pct}%` : 'unknown';
+      const btcSinceFrom = liveData.btc_since_price ? `${Math.round(liveData.btc_since_price).toLocaleString()}` : 'unknown';
+      const ethSinceFrom = liveData.eth_since_price ? `${Math.round(liveData.eth_since_price).toLocaleString()}` : 'unknown';
+      const fgValue      = liveData.fear_greed_value || 'unknown';
+      const fgLabel      = liveData.fear_greed_label || 'unknown';
+      const btcDom       = liveData.btc_dominance ? `${liveData.btc_dominance}%` : 'unknown';
+
       const prompt = `You are a crypto and macro analyst. Generate crypto intelligence data for the period from ${sinceFriendly} to today (${TRADING_WEEK}).
+
+LIVE DATA (use these exact values, do not estimate):
+- BTC current price: ${btcCurrent}
+- ETH current price: ${ethCurrent}
+- BTC price on ${sinceFriendly}: ${btcSinceFrom} → today: ${btcCurrent} = ${btcSincePct}
+- ETH price on ${sinceFriendly}: ${ethSinceFrom} → today: ${ethCurrent} = ${ethSincePct}
+- Fear & Greed index: ${fgValue} (${fgLabel})
+- BTC Dominance: ${btcDom}
+Use these exact numbers in your response. Do not substitute your own estimates for any of the above.
 
 Return ONLY valid JSON, no markdown:
 {
@@ -1285,6 +1418,26 @@ For timeline: include 6-10 major events chronologically from ${sinceFriendly} to
 
         // Adjust arrow position after content update
         setTimeout(adjustPageArrows, 100);
+
+        // Save to localStorage
+        const pstTimestamp = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+        const fgEl = document.getElementById('c-fg-val');
+        localStorage.setItem('ceruleus-crypto', JSON.stringify({
+          html: {
+            headline: document.getElementById('crypto-headline').innerHTML,
+            subhead: document.getElementById('crypto-subhead').textContent,
+            perfGrid: document.getElementById('crypto-perf-grid').innerHTML,
+            fgVal: fgEl.textContent,
+            fgClass: fgEl.className,
+            fgSub: document.getElementById('c-fg-sub').textContent,
+            domVal: document.getElementById('c-dom-val').textContent,
+            domSub: document.getElementById('c-dom-sub').textContent,
+            timeline: document.getElementById('crypto-timeline').innerHTML,
+            sinceLabel: document.getElementById('timeline-since-label').textContent
+          },
+          timestamp: pstTimestamp
+        }));
+        document.getElementById('crypto-last-updated').textContent = `Last updated: ${pstTimestamp}`;
 
       } catch(err) {
         errorEl.textContent = `Generation failed: ${err.message}`;
@@ -1382,9 +1535,16 @@ Instructions:
 
         // Update last refresh timestamp
         const now = new Date();
-        const options = { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: '2-digit', hour12: true };
-        const pstTimestamp = now.toLocaleString('en-US', options).toLowerCase() + ' PT';
-        document.getElementById('crypto-last-updated').textContent = `Last refresh: ${pstTimestamp}`;
+        const pstTimestamp = now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+        document.getElementById('crypto-last-updated').textContent = `Last updated: ${pstTimestamp}`;
+
+        // Save to localStorage
+        localStorage.setItem('ceruleus-crypto-right', JSON.stringify({
+          html: {
+            rightPanel: document.getElementById('crypto-right-panel').innerHTML
+          },
+          timestamp: pstTimestamp
+        }));
 
         // Adjust arrow position after content update
         setTimeout(adjustPageArrows, 100);
@@ -1519,6 +1679,17 @@ Include 3-5 events per active day, 1-2 for quieter days. Keep descriptions under
               </div>`;
           }).join('');
         }
+
+        // Save to localStorage
+        const pstTimestamp = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+        localStorage.setItem('ceruleus-calendar', JSON.stringify({
+          html: {
+            headline: document.getElementById('cal-headline').innerHTML,
+            grid: document.getElementById('cal-week-grid').innerHTML
+          },
+          timestamp: pstTimestamp
+        }));
+        document.getElementById('cal-last-updated').textContent = `Last updated: ${pstTimestamp}`;
 
       } catch(err) {
         errorEl.textContent = `Generation failed: ${err.message}`;
@@ -2049,6 +2220,20 @@ Return ONLY valid JSON, no markdown. Probabilities must NOT include a ~ symbol:
         if (d.equity_drivers) renderDrivers(d.equity_drivers, 'equity-drivers');
         if (d.btc_drivers)    renderDrivers(d.btc_drivers,    'btc-drivers');
         document.getElementById('week-label').textContent = TRADING_WEEK;
+
+        // Save to localStorage
+        const pstTimestamp = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+        localStorage.setItem('ceruleus-scenarios', JSON.stringify({
+          html: {
+            headline: document.getElementById('headline').innerHTML,
+            subhead: document.getElementById('subhead').textContent,
+            scenarios: document.getElementById('scenarios-grid').innerHTML,
+            equityDrivers: document.getElementById('equity-drivers').innerHTML,
+            btcDrivers: document.getElementById('btc-drivers').innerHTML
+          },
+          timestamp: pstTimestamp
+        }));
+        document.getElementById('scenarios-last-updated').textContent = `Last updated: ${pstTimestamp}`;
       } catch (err) {
         errorBanner.textContent = `Generation failed: ${err.message}`;
         errorBanner.style.display = 'block';
